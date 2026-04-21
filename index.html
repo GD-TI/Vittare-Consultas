@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diagnóstico Financeiro Profissional | Vittare</title>
+  <meta name="description" content="Descubra o que está travando seu crédito. Diagnóstico financeiro profissional baseado nos mesmos sistemas que os bancos usam."/>
+
+  <!-- Favicon "V" dourado — aparece na aba do navegador -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="shortcut icon" href="favicon.svg"/>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     NAVBAR
+══════════════════════════════════ -->
+<nav class="navbar">
+  <div class="navbar__inner">
+    <div class="navbar__logo-wrap">
+      <img src="logo.png" alt="Vittare" class="navbar__logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="navbar__logo-text" style="display:none">VITTARE</span>
+    </div>
+
+    <div class="navbar__actions">
+      <!-- Theme toggle -->
+      <button class="theme-toggle" id="themeToggle" title="Alternar tema" aria-label="Alternar tema claro/escuro">
+        <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
+        <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
+      </button>
+
+      <!-- Login -->
+      <a href="#" class="btn-login-nav" id="openLogin">
+        <span>Entrar</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════
+     LOGIN MODAL
+══════════════════════════════════ -->
+<div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <div class="modal-box">
+    <button class="modal-close" id="closeLogin" aria-label="Fechar">✕</button>
+    <h2 id="loginTitle">Acessar minha conta</h2>
+    <p class="modal-sub">Entre para acompanhar seu diagnóstico</p>
+
+    <div class="form-group">
+      <label for="loginEmail">E-mail</label>
+      <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email"/>
+    </div>
+    <div class="form-group">
+      <label for="loginPass">Senha</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <p class="form-error" id="loginError">E-mail ou senha incorretos.</p>
+
+    <button class="btn-primary btn-full" id="loginBtn" style="margin-top:8px;">Entrar</button>
+    <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:16px;">
+      Acesso exclusivo para clientes. <br>Após a compra, você receberá as credenciais.
+    </p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <p class="hero__label">Diagnóstico Financeiro Profissional</p>
+    <h1 class="hero__headline">
+      Seu crédito não está<br>sendo aprovado?<br>
+      <span class="gold-italic">Existe um motivo.</span>
+    </h1>
+    <p class="hero__sub">
+      Ele aparece nos mesmos sistemas que os bancos usam.
+      <strong>Descubra o que está travando seu crédito</strong>,
+      mesmo com nome&nbsp;"limpo".
+    </p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     VÍDEO (9:16)
+══════════════════════════════════ -->
+<section class="video-section">
+  <div class="container">
+    <div class="video-wrapper" id="videoWrapper">
+      <video id="mainVideo" playsinline preload="metadata">
+        <source src="video.mp4" type="video/mp4"/>
+        Seu navegador não suporta vídeo HTML5.
+      </video>
+
+      <!-- Overlay de play customizado -->
+      <div class="video-overlay" id="videoOverlay">
+        <div class="video-play-btn">▶</div>
+        <p>Clique para assistir</p>
+      </div>
+    </div>
+
+    <div class="btn-center">
+      <a href="#identifica" class="btn-primary">Saiba Mais</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     PAIN POINTS
+══════════════════════════════════ -->
+<section class="pain-section" id="identifica">
+  <div class="container">
+    <p class="label-tag">Você se identifica?</p>
+    <h2 class="section-h2">
+      Você se identifica com <span class="gold-italic">alguma dessas</span> situações?
+    </h2>
+
+    <ul class="card-list" style="margin-top:36px;">
+      <li><span class="icon-x">✕</span> Seu crédito é negado e o banco não explica o motivo</li>
+      <li><span class="icon-x">✕</span> O gerente fala em "perfil não aprovado" mas você não entende o porquê</li>
+      <li><span class="icon-x">✕</span> Você paga tudo em dia, mas o limite do cartão nunca aumenta</li>
+      <li><span class="icon-x">✕</span> Financiamento ou empréstimo sempre parecem "difíceis demais" de aprovar</li>
+      <li><span class="icon-x">✕</span> Você não faz ideia de como os bancos enxergam seu CPF hoje</li>
+      <li><span class="icon-x">✕</span> Fica com medo de pedir crédito e ser negado de novo, porque não sabe o que aparece no sistema</li>
+    </ul>
+
+    <p style="margin-top:30px;font-size:15px;color:var(--text-secondary);">
+      Seu problema não é sorte.<br>
+      <strong style="color:var(--text-primary);">É falta de enxergar o mesmo relatório que o banco enxerga sobre você.</strong>
+    </p>
+
+    <div class="btn-center">
+      <a href="#preco" class="btn-primary">Descubra o Motivo Agora</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     BANKS SECTION
+══════════════════════════════════ -->
+<section>
+  <div class="container">
+    <h2 class="section-h2">
+      Os bancos não olham<br>
+      só se seu nome está <span class="gold-italic">"limpo"…</span>
+    </h2>
+    <p class="section-sub">Eles usam sistemas internos que mostram MUITO mais sobre você do que apenas SPC e Serasa.</p>
+
+    <ul class="card-list">
+      <li><span class="icon-chk">✓</span> Dívidas internas registradas em sistemas como o Banco Central</li>
+      <li><span class="icon-chk">✓</span> Prejuízos lançados por instituições financeiras no seu CPF</li>
+      <li><span class="icon-chk">✓</span> Seu risco de crédito e a classificação de rating que o sistema te dá</li>
+      <li><span class="icon-chk">✓</span> Sua capacidade real de pagamento mensal, baseada no seu histórico</li>
+      <li><span class="icon-chk">✓</span> O limite de crédito que o sistema entende que você suporta hoje</li>
+      <li><span class="icon-chk">✓</span> Alertas internos de restrição que não aparecem só em SPC/Serasa</li>
+      <li><span class="icon-chk">✓</span> Registros em bureaus como SPC, Serasa, Boa Vista e outros</li>
+      <li><span class="icon-chk">✓</span> Protestos ativos e ocorrências que derrubam sua análise de crédito</li>
+    </ul>
+
+    <p style="margin-top:32px;font-size:15px;color:var(--text-secondary);">
+      Sem isso, você está tentando crédito <strong style="color:var(--text-primary);">no escuro</strong>.<br>
+      E se você não vê isso, você não sabe o motivo real da negativa.
+    </p>
+
+    <div class="btn-center">
+      <a href="#preco" class="btn-primary">Ver o que os bancos enxergam sobre mim</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     RAIO X
+══════════════════════════════════ -->
+<section id="diagnostico">
+  <div class="container">
+    <h2 class="section-h2">
+      <span class="gold-italic">Raio X</span> do Seu Crédito<br>e das Suas Finanças
+    </h2>
+    <p class="section-sub" style="margin-bottom:36px;">
+      Diagnóstico completo baseado no que o sistema financeiro mostra, de forma clara e objetiva:
+    </p>
+
+    <ul class="card-list">
+      <li><span class="icon-dot">•</span> Se existem dívidas internas no Banco Central</li>
+      <li><span class="icon-dot">•</span> Se há restrições no SPC, Serasa ou Boa Vista</li>
+      <li><span class="icon-dot">•</span> Se seu CPF está marcado como prejuízo</li>
+      <li><span class="icon-dot">•</span> Qual é sua classificação atual de rating</li>
+      <li><span class="icon-dot">•</span> Qual o risco de crédito que o sistema enxerga</li>
+      <li><span class="icon-dot">•</span> Qual limite de crédito você teria possibilidade de aprovação</li>
+      <li><span class="icon-dot">•</span> Tudo isso antes de você perder tempo tentando crédito às cegas.</li>
+    </ul>
+
+    <p style="margin-top:28px;font-size:15px;color:var(--text-primary);font-weight:700;">
+      Pare de tentar no escuro. Entenda antes.
+    </p>
+
+    <div class="btn-center">
+      <a href="#preco" class="btn-primary">Quero Meu Diagnóstico Agora</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     NOTICE
+══════════════════════════════════ -->
+<section style="padding: 0 0 60px;">
+  <div class="container">
+    <div class="notice-box">
+      <p class="notice-title">⚠ Importante</p>
+      <p>Isso não é promessa de aprovação de crédito.<br>
+      É clareza total sobre sua situação e o que precisa ser ajustado para mudar o resultado.</p>
+      <p class="fine">A decisão final de aprovar ou não um crédito sempre será da instituição financeira. O que o diagnóstico faz é colocar você na posição de quem entende o jogo, em vez de continuar tentando no escuro.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     PRICING
+══════════════════════════════════ -->
+<section id="preco" style="padding:80px 0; text-align:center;">
+  <div class="container">
+    <div class="pricing-card">
+      <span class="pricing-badge">☆ Oferta Especial — Atendimento Individual</span>
+      <h2 style="font-size:26px;color:var(--text-primary);margin-bottom:24px;">Diagnóstico Financeiro Profissional</h2>
+
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:4px;">Valor normal: <s>R$ 179,90</s></p>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:10px;">Você paga apenas</p>
+      <div class="price-value">R$97</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:34px;">à vista — PIX, cartão ou boleto</p>
+
+      <ul class="card-list" style="text-align:left;margin-bottom:34px;">
+        <li><span class="icon-chk">✓</span> Consulta completa nos principais sistemas de análise de crédito</li>
+        <li><span class="icon-chk">✓</span> Relatório com os principais pontos que aparecem sobre você</li>
+        <li><span class="icon-chk">✓</span> Interpretação dos dados em linguagem simples</li>
+        <li><span class="icon-chk">✓</span> Orientação inicial sobre o que precisa ser ajustado primeiro</li>
+      </ul>
+
+      <a href="#" class="btn-primary btn-full">Quero Meu Diagnóstico Agora</a>
+    </div>
+
+    <p class="trust-bar">Pagamento seguro &bull; Atendimento individual &bull; Acesso em 3 dias úteis</p>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════ -->
+<section>
+  <div class="container">
+    <p class="label-tag" style="text-align:center;">Processo</p>
+    <h2 class="section-h2" style="text-align:center;">
+      Como funciona na <span class="gold-italic">prática</span>
+    </h2>
+    <p class="section-sub" style="text-align:center;max-width:520px;margin:0 auto 44px;">
+      Nada de complicação. Em poucos passos você tem acesso ao mesmo tipo de consulta que os bancos utilizam.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="step">
+        <div class="step__num">1</div>
+        <div>
+          <h3>Pedido do diagnóstico</h3>
+          <p>Você clica no botão, faz o pagamento de R$ 97,00 e preenche um formulário simples com seus dados.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">2</div>
+        <div>
+          <h3>Consulta e análise profissional</h3>
+          <p>Realizamos as consultas nos sistemas de análise de crédito e preparamos o seu relatório, destacando os pontos mais importantes sobre como o sistema financeiro enxerga hoje o seu CPF.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step__num">3</div>
+        <div>
+          <h3>Entrega e explicação</h3>
+          <p>Você recebe o diagnóstico em até 3 dias úteis com uma explicação clara, em linguagem simples, sobre o que cada ponto significa e o que precisa ser feito a partir de agora.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-center">
+      <a href="#preco" class="btn-primary">Quero Meu Diagnóstico Agora</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     FAQ
+══════════════════════════════════ -->
+<section>
+  <div class="container">
+    <p class="label-tag" style="text-align:center;">Dúvidas</p>
+    <h2 class="section-h2" style="text-align:center;margin-bottom:44px;">
+      Perguntas <span class="gold-italic">Frequentes</span>
+    </h2>
+
+    <ul style="list-style:none;">
+      <li class="faq-item">
+        <button class="faq-q">Em quanto tempo recebo meu diagnóstico?<span class="faq-arr">▼</span></button>
+        <div class="faq-ans">Em até 3 dias úteis após a confirmação do pagamento e envio dos seus dados.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-q">Vou receber só um relatório ou alguém vai me explicar?<span class="faq-arr">▼</span></button>
+        <div class="faq-ans">Você recebe o relatório completo com uma explicação em linguagem simples sobre cada ponto e o que fazer a partir de agora.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-q">É seguro passar meus dados para essa consulta?<span class="faq-arr">▼</span></button>
+        <div class="faq-ans">Sim. Todos os dados são tratados com sigilo total e usados exclusivamente para a realização do diagnóstico. O pagamento é criptografado via SSL.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-q">Essa consulta pode prejudicar meu CPF?<span class="faq-arr">▼</span></button>
+        <div class="faq-ans">Não. A consulta é do tipo "soft inquiry" — não aparece como solicitação de crédito e não impacta sua pontuação.</div>
+      </li>
+      <li class="faq-item">
+        <button class="faq-q">Se já estou com o nome limpo, ainda faz sentido?<span class="faq-arr">▼</span></button>
+        <div class="faq-ans">Sim. Os bancos analisam muito além do SPC/Serasa. Alertas internos, registros no Banco Central e rating de risco podem travar sua aprovação mesmo com nome limpo. O diagnóstico mostra tudo isso.</div>
+      </li>
+    </ul>
+
+    <div class="btn-center">
+      <a href="#preco" class="btn-primary">Quero Meu Diagnóstico Agora</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     SECURITY + FOOTER
+══════════════════════════════════ -->
+<section style="padding:40px 0 60px;">
+  <div class="container">
+    <div class="security-box">
+      <p class="sec-title">🔒 Compra 100% Segura</p>
+      <p>Pagamento processado com criptografia SSL. Você receberá as instruções de acesso imediatamente após a confirmação. Em caso de dúvidas, nosso suporte está disponível por WhatsApp.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="foot-brand">© 2026 Diagnóstico Financeiro Profissional. Todos os direitos reservados.</p>
+  <p>As informações contidas neste site têm caráter educativo. Não nos responsabilizamos por decisões financeiras tomadas pelo usuário.</p>
+</footer>
+
+
+<!-- ══════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════ -->
+<script>
+/* ── Theme Toggle ── */
+const html = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+
+// Persist preference
+const saved = localStorage.getItem('vittare-theme');
+if (saved) html.setAttribute('data-theme', saved);
+
+themeBtn.addEventListener('click', () => {
+  const current = html.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('vittare-theme', next);
+});
+
+/* ── Video Player ── */
+const video   = document.getElementById('mainVideo');
+const overlay = document.getElementById('videoOverlay');
+
+overlay.addEventListener('click', () => {
+  overlay.classList.add('hidden');
+  video.play().catch(() => {
+    // autoplay blocked — show controls
+    video.controls = true;
+    overlay.classList.remove('hidden');
+  });
+});
+
+video.addEventListener('click', () => {
+  if (video.paused) {
+    video.play();
+    overlay.classList.add('hidden');
+  } else {
+    video.pause();
+    overlay.classList.remove('hidden');
+  }
+});
+
+video.addEventListener('ended', () => {
+  overlay.classList.remove('hidden');
+});
+
+/* ── Login Modal ── */
+const modal      = document.getElementById('loginModal');
+const openBtn    = document.getElementById('openLogin');
+const closeBtn   = document.getElementById('closeLogin');
+const loginBtn   = document.getElementById('loginBtn');
+const errorMsg   = document.getElementById('loginError');
+
+openBtn.addEventListener('click', e => {
+  e.preventDefault();
+  modal.classList.add('active');
+});
+closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
+
+// Credentials — change these before publishing
+const ADMIN_EMAIL = 'admin@vittare.com';
+const ADMIN_PASS  = 'Vittare@2026';
+
+loginBtn.addEventListener('click', () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+
+  if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+    window.location.href = 'admin.html';
+  } else {
+    errorMsg.classList.add('show');
+  }
+});
+
+document.getElementById('loginEmail').addEventListener('input', () => errorMsg.classList.remove('show'));
+document.getElementById('loginPass').addEventListener('input',  () => errorMsg.classList.remove('show'));
+
+// Enter key in password
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loginBtn.click();
+});
+
+/* ── FAQ ── */
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>

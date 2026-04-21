@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin | Vittare</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── Admin-specific styles ── */
+    body { overflow-x: hidden; }
+
+    /* Sidebar */
+    .admin-layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: var(--bg-2);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; height: 100vh;
+      z-index: 50; transition: transform 0.3s, background 0.35s;
+    }
+    .sidebar__logo {
+      padding: 28px 24px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar__logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 900; color: var(--gold);
+    }
+    .sidebar__label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 4px;
+    }
+    .sidebar__nav { flex: 1; padding: 20px 12px; }
+    .nav-group-title {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 16px 12px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-radius: 9px;
+      color: var(--text-secondary); font-size: 14px; font-weight: 400;
+      text-decoration: none; cursor: pointer; transition: all 0.18s;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--bg-card); color: var(--text-primary); }
+    .nav-item.active { background: rgba(201,169,110,0.12); color: var(--gold); font-weight: 700; }
+    .nav-item .nav-icon { width: 18px; text-align: center; font-size: 15px; }
+    .sidebar__footer { padding: 16px 12px; border-top: 1px solid var(--border); }
+
+    /* Main content */
+    .admin-main {
+      flex: 1; margin-left: 240px;
+      background: var(--bg); min-height: 100vh;
+      transition: background 0.35s;
+    }
+
+    /* Topbar */
+    .admin-topbar {
+      height: 64px; border-bottom: 1px solid var(--border);
+      background: var(--bg-2);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; position: sticky; top: 0; z-index: 40;
+      transition: background 0.35s;
+    }
+    .topbar-title { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .topbar-actions { display: flex; align-items: center; gap: 14px; }
+    .admin-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-300), var(--gold-500));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; color: #0f0e0c; font-size: 14px;
+    }
+
+    /* Pages */
+    .admin-page { display: none; padding: 32px 28px; }
+    .admin-page.active { display: block; }
+
+    /* Stats */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px 22px;
+    }
+    .stat-card .stat-icon { font-size: 22px; margin-bottom: 12px; }
+    .stat-card .stat-value {
+      font-family: 'Playfair Display', serif; font-size: 34px;
+      font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 6px;
+    }
+    .stat-card .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* Table */
+    .table-wrap {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .table-header {
+      padding: 18px 22px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .table-header h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); font-family: 'Lato', sans-serif; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 13px 22px; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 14px 22px; font-size: 14px; color: var(--text-secondary);
+      border-bottom: 1px solid rgba(201,169,110,0.06);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(201,169,110,0.04); }
+
+    /* Badges */
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .badge-green { background: rgba(93,184,122,0.15); color: var(--green); }
+    .badge-gold  { background: rgba(201,169,110,0.15); color: var(--gold); }
+    .badge-red   { background: rgba(232,80,80,0.15);   color: var(--red); }
+    .badge-muted { background: rgba(201,169,110,0.07); color: var(--text-muted); }
+
+    /* Sections within pages */
+    .page-title { font-size: 24px; font-weight: 900; color: var(--text-primary); margin-bottom: 6px; }
+    .page-sub   { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+    /* Form (add client) */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .admin-form-group { margin-bottom: 16px; }
+    .admin-form-group label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; }
+    .admin-form-group input,
+    .admin-form-group select,
+    .admin-form-group textarea {
+      width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 12px 14px; font-size: 14px;
+      color: var(--text-primary); font-family: 'Lato', sans-serif;
+      transition: border-color 0.2s, background 0.35s; outline: none;
+      resize: vertical;
+    }
+    .admin-form-group input:focus,
+    .admin-form-group select:focus,
+    .admin-form-group textarea:focus { border-color: var(--gold); }
+
+    /* Action btns in table */
+    .btn-sm {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 7px; border: 1px solid var(--border);
+      cursor: pointer; background: none; color: var(--gold);
+      transition: all 0.18s;
+    }
+    .btn-sm:hover { background: var(--gold); color: #0f0e0c; }
+    .btn-sm-danger { color: var(--red); border-color: rgba(232,80,80,0.3); }
+    .btn-sm-danger:hover { background: var(--red); color: #fff; }
+
+    /* Settings form */
+    .settings-section {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px 26px; margin-bottom: 20px;
+    }
+    .settings-section h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; font-family: 'Lato', sans-serif; }
+
+    /* Mobile toggle */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .admin-main { margin-left: 0; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* Notification toast */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      background: var(--bg-card); border: 1.5px solid var(--gold);
+      border-radius: 10px; padding: 14px 20px;
+      font-size: 14px; color: var(--text-primary);
+      box-shadow: var(--shadow);
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.3s;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     AUTH GATE (shown if not logged in)
+══════════════════════════════════ -->
+<div id="authGate" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);">
+  <div class="modal-box" style="max-width:400px;width:90%;margin:16px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--gold);">VITTARE</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-top:4px;">Painel Administrativo</div>
+    </div>
+    <div class="form-group">
+      <label for="gEmail">E-mail</label>
+      <input type="email" id="gEmail" placeholder="admin@vittare.com" autocomplete="email"/>
+    </div>
+    <div class="form-group">
+      <label for="gPass">Senha</label>
+      <input type="password" id="gPass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <p class="form-error" id="gError">Credenciais incorretas.</p>
+    <button class="btn-primary btn-full" id="gLoginBtn" style="margin-top:8px;">Entrar no Painel</button>
+    <p style="text-align:center;margin-top:16px;">
+      <a href="index.html" style="font-size:13px;color:var(--text-muted);text-decoration:none;">← Voltar ao site</a>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     ADMIN PANEL (hidden until login)
+══════════════════════════════════ -->
+<div id="adminPanel" style="display:none;">
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__logo">
+        <div class="sidebar__logo-text">VITTARE</div>
+        <div class="sidebar__label">Painel Admin</div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <div class="nav-group-title">Principal</div>
+        <a class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a class="nav-item" data-page="clientes">
+          <span class="nav-icon">👥</span> Clientes
+        </a>
+        <a class="nav-item" data-page="diagnosticos">
+          <span class="nav-icon">📋</span> Diagnósticos
+        </a>
+
+        <div class="nav-group-title">Gestão</div>
+        <a class="nav-item" data-page="novo">
+          <span class="nav-icon">➕</span> Novo Cliente
+        </a>
+        <a class="nav-item" data-page="financeiro">
+          <span class="nav-icon">💰</span> Financeiro
+        </a>
+
+        <div class="nav-group-title">Sistema</div>
+        <a class="nav-item" data-page="config">
+          <span class="nav-icon">⚙️</span> Configurações
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <a class="nav-item" href="index.html">
+          <span class="nav-icon">🌐</span> Ver site
+        </a>
+        <a class="nav-item" id="sidebarLogout" style="color:var(--red);">
+          <span class="nav-icon">🚪</span> Sair
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <span class="topbar-title" id="topbarTitle">Dashboard</span>
+        <div class="topbar-actions">
+          <button class="theme-toggle" id="adminThemeToggle" title="Alternar tema">
+            <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
+            <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
+          </button>
+          <div class="admin-avatar">A</div>
+        </div>
+      </div>
+
+      <!-- ── DASHBOARD ── -->
+      <div class="admin-page active" id="page-dashboard">
+        <p class="page-title">Visão Geral</p>
+        <p class="page-sub">Bem-vindo ao painel da Vittare.</p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="stat-clientes">0</div>
+            <div class="stat-label">Clientes Totais</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-value" id="stat-pendentes">0</div>
+            <div class="stat-label">Diagnósticos Pendentes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="stat-concluidos">0</div>
+            <div class="stat-label">Concluídos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="stat-receita">R$0</div>
+            <div class="stat-label">Receita Total</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-header">
+            <h3>Últimos Clientes</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th><th>CPF</th><th>Data</th><th>Status</th><th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="dashTable">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum cliente cadastrado ainda.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── CLIENTES ── -->
+      <div class="admin-page" id="page-clientes">
+        <p class="page-title">Clientes</p>
+        <p class="page-sub">Todos os clientes cadastrados.</p>
+        <div class="table-wrap">
+          <div class="table-header">
+            <h3>Lista de Clientes</h3>
+            <button class="btn-sm" onclick="goPage('novo')">+ Novo Cliente</button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>E-mail</th><th>CPF</th><th>Telefone</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="clientesTable">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum cliente cadastrado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── DIAGNÓSTICOS ── -->
+      <div class="admin-page" id="page-diagnosticos">
+        <p class="page-title">Diagnósticos</p>
+        <p class="page-sub">Acompanhe o andamento de cada diagnóstico.</p>
+        <div class="table-wrap">
+          <div class="table-header"><h3>Todos os Diagnósticos</h3></div>
+          <table>
+            <thead>
+              <tr><th>Cliente</th><th>Solicitado em</th><th>Status</th><th>Prazo</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="diagTable">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum diagnóstico registrado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── NOVO CLIENTE ── -->
+      <div class="admin-page" id="page-novo">
+        <p class="page-title">Novo Cliente</p>
+        <p class="page-sub">Cadastre um novo cliente manualmente.</p>
+
+        <div class="settings-section" style="max-width:680px;">
+          <h3>Dados do Cliente</h3>
+          <div class="form-row">
+            <div class="admin-form-group">
+              <label>Nome Completo</label>
+              <input type="text" id="nc-nome" placeholder="João da Silva"/>
+            </div>
+            <div class="admin-form-group">
+              <label>CPF</label>
+              <input type="text" id="nc-cpf" placeholder="000.000.000-00"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="admin-form-group">
+              <label>E-mail</label>
+              <input type="email" id="nc-email" placeholder="joao@email.com"/>
+            </div>
+            <div class="admin-form-group">
+              <label>Telefone / WhatsApp</label>
+              <input type="text" id="nc-tel" placeholder="(11) 99999-9999"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="admin-form-group">
+              <label>Valor Pago (R$)</label>
+              <input type="number" id="nc-valor" placeholder="97"/>
+            </div>
+            <div class="admin-form-group">
+              <label>Status do Diagnóstico</label>
+              <select id="nc-status">
+                <option value="pendente">Pendente</option>
+                <option value="em_andamento">Em Andamento</option>
+                <option value="concluido">Concluído</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label>Observações</label>
+            <textarea id="nc-obs" rows="3" placeholder="Observações internas..."></textarea>
+          </div>
+          <button class="btn-primary" id="salvarCliente" style="margin-top:8px;">Salvar Cliente</button>
+        </div>
+      </div>
+
+      <!-- ── FINANCEIRO ── -->
+      <div class="admin-page" id="page-financeiro">
+        <p class="page-title">Financeiro</p>
+        <p class="page-sub">Resumo de receitas e pagamentos.</p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">💳</div>
+            <div class="stat-value" id="fin-total">R$0</div>
+            <div class="stat-label">Receita Total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🗓</div>
+            <div class="stat-value" id="fin-mes">R$0</div>
+            <div class="stat-label">Este Mês</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value" id="fin-qtd">0</div>
+            <div class="stat-label">Vendas</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-header"><h3>Histórico de Pagamentos</h3></div>
+          <table>
+            <thead><tr><th>Cliente</th><th>Data</th><th>Valor</th><th>Método</th><th>Status</th></tr></thead>
+            <tbody id="finTable">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum pagamento registrado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── CONFIGURAÇÕES ── -->
+      <div class="admin-page" id="page-config">
+        <p class="page-title">Configurações</p>
+        <p class="page-sub">Ajuste as configurações do sistema.</p>
+
+        <div class="settings-section" style="max-width:560px;">
+          <h3>Credenciais de Acesso</h3>
+          <div class="admin-form-group">
+            <label>E-mail Admin</label>
+            <input type="email" id="cfg-email" value="admin@vittare.com"/>
+          </div>
+          <div class="admin-form-group">
+            <label>Nova Senha</label>
+            <input type="password" id="cfg-pass" placeholder="Nova senha..."/>
+          </div>
+          <button class="btn-primary" onclick="showToast('Configurações salvas!')">Salvar Alterações</button>
+        </div>
+
+        <div class="settings-section" style="max-width:560px;">
+          <h3>Aparência</h3>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span style="font-size:14px;color:var(--text-secondary);">Tema atual:</span>
+            <button class="theme-toggle" id="cfgThemeToggle">
+              <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
+              <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section" style="max-width:560px;">
+          <h3>Dados do Site</h3>
+          <div class="admin-form-group">
+            <label>WhatsApp de Suporte</label>
+            <input type="text" placeholder="+55 11 99999-9999"/>
+          </div>
+          <div class="admin-form-group">
+            <label>E-mail de Contato</label>
+            <input type="email" placeholder="contato@vittare.com"/>
+          </div>
+          <button class="btn-primary" onclick="showToast('Dados do site salvos!')">Salvar</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Credentials (mesmas do index.html) ── */
+const ADMIN_EMAIL = 'admin@vittare.com';
+const ADMIN_PASS  = 'Vittare@2026';
+
+/* ── Auth ── */
+const isLogged = sessionStorage.getItem('vittare_admin');
+if (isLogged === '1') boot();
+
+document.getElementById('gLoginBtn').addEventListener('click', () => {
+  const e = document.getElementById('gEmail').value.trim();
+  const p = document.getElementById('gPass').value;
+  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
+    sessionStorage.setItem('vittare_admin', '1');
+    boot();
+  } else {
+    document.getElementById('gError').classList.add('show');
+  }
+});
+document.getElementById('gPass').addEventListener('keydown', ev => { if (ev.key === 'Enter') document.getElementById('gLoginBtn').click(); });
+document.getElementById('gEmail').addEventListener('input', () => document.getElementById('gError').classList.remove('show'));
+
+function boot() {
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  renderAll();
+}
+
+/* ── Theme ── */
+const html = document.documentElement;
+const saved = localStorage.getItem('vittare-theme');
+if (saved) html.setAttribute('data-theme', saved);
+
+['adminThemeToggle','cfgThemeToggle'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', () => {
+    const cur = html.getAttribute('data-theme') || 'dark';
+    const nxt = cur === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', nxt);
+    localStorage.setItem('vittare-theme', nxt);
+  });
+});
+
+/* ── Navigation ── */
+function goPage(page) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+  const navEl = document.querySelector(`[data-page="${page}"]`);
+  if (navEl) navEl.classList.add('active');
+  const pageEl = document.getElementById(`page-${page}`);
+  if (pageEl) pageEl.classList.add('active');
+  const titles = { dashboard:'Dashboard', clientes:'Clientes', diagnosticos:'Diagnósticos', novo:'Novo Cliente', financeiro:'Financeiro', config:'Configurações' };
+  document.getElementById('topbarTitle').textContent = titles[page] || page;
+}
+
+document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => goPage(item.dataset.page));
+});
+
+document.getElementById('sidebarLogout').addEventListener('click', () => {
+  sessionStorage.removeItem('vittare_admin');
+  window.location.href = 'index.html';
+});
+
+/* ── Data Store (localStorage) ── */
+function loadClients() {
+  try { return JSON.parse(localStorage.getItem('vittare_clients') || '[]'); } catch { return []; }
+}
+function saveClients(arr) {
+  localStorage.setItem('vittare_clients', JSON.stringify(arr));
+}
+
+/* ── Save new client ── */
+document.getElementById('salvarCliente').addEventListener('click', () => {
+  const nome   = document.getElementById('nc-nome').value.trim();
+  const cpf    = document.getElementById('nc-cpf').value.trim();
+  const email  = document.getElementById('nc-email').value.trim();
+  const tel    = document.getElementById('nc-tel').value.trim();
+  const valor  = parseFloat(document.getElementById('nc-valor').value) || 97;
+  const status = document.getElementById('nc-status').value;
+  const obs    = document.getElementById('nc-obs').value.trim();
+
+  if (!nome || !cpf) { showToast('⚠ Preencha nome e CPF!'); return; }
+
+  const clients = loadClients();
+  const now = new Date();
+  clients.push({
+    id: Date.now(),
+    nome, cpf, email, tel, valor, status, obs,
+    data: now.toLocaleDateString('pt-BR'),
+    dataSt: now.toISOString(),
+  });
+  saveClients(clients);
+
+  // Clear form
+  ['nc-nome','nc-cpf','nc-email','nc-tel','nc-valor','nc-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nc-status').value = 'pendente';
+
+  showToast('✅ Cliente salvo com sucesso!');
+  renderAll();
+  goPage('clientes');
+});
+
+/* ── Render all tables ── */
+function renderAll() {
+  const clients = loadClients();
+
+  // Stats
+  const pendentes = clients.filter(c => c.status === 'pendente').length;
+  const concluidos = clients.filter(c => c.status === 'concluido').length;
+  const receita = clients.reduce((s, c) => s + (c.valor || 0), 0);
+
+  document.getElementById('stat-clientes').textContent  = clients.length;
+  document.getElementById('stat-pendentes').textContent = pendentes;
+  document.getElementById('stat-concluidos').textContent= concluidos;
+  document.getElementById('stat-receita').textContent   = 'R$' + receita.toLocaleString('pt-BR');
+  document.getElementById('fin-total').textContent      = 'R$' + receita.toLocaleString('pt-BR');
+  document.getElementById('fin-mes').textContent        = 'R$' + receita.toLocaleString('pt-BR');
+  document.getElementById('fin-qtd').textContent        = clients.length;
+
+  // Badge helper
+  const badgeStatus = s => {
+    if (s === 'concluido')    return '<span class="badge badge-green">Concluído</span>';
+    if (s === 'em_andamento') return '<span class="badge badge-gold">Em Andamento</span>';
+    return '<span class="badge badge-muted">Pendente</span>';
+  };
+
+  // Dashboard table (last 5)
+  const last5 = [...clients].reverse().slice(0, 5);
+  const dashTb = document.getElementById('dashTable');
+  dashTb.innerHTML = last5.length ? last5.map(c =>
+    `<tr><td>${c.nome}</td><td>${c.cpf}</td><td>${c.data}</td><td>${badgeStatus(c.status)}</td><td>R$ ${c.valor.toLocaleString('pt-BR')}</td></tr>`
+  ).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum cliente cadastrado ainda.</td></tr>';
+
+  // Clients table
+  const cliTb = document.getElementById('clientesTable');
+  cliTb.innerHTML = clients.length ? [...clients].reverse().map(c =>
+    `<tr>
+      <td>${c.nome}</td>
+      <td>${c.email || '—'}</td>
+      <td>${c.cpf}</td>
+      <td>${c.tel || '—'}</td>
+      <td>${badgeStatus(c.status)}</td>
+      <td>
+        <button class="btn-sm" onclick="changeStatus(${c.id})">Status</button>
+        <button class="btn-sm btn-sm-danger" onclick="removeClient(${c.id})">Excluir</button>
+      </td>
+    </tr>`
+  ).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum cliente cadastrado.</td></tr>';
+
+  // Diagnósticos table
+  const diagTb = document.getElementById('diagTable');
+  diagTb.innerHTML = clients.length ? [...clients].reverse().map(c => {
+    const prazo = new Date(new Date(c.dataSt).getTime() + 3*24*60*60*1000);
+    return `<tr>
+      <td>${c.nome}</td>
+      <td>${c.data}</td>
+      <td>${badgeStatus(c.status)}</td>
+      <td>${c.status === 'concluido' ? '—' : prazo.toLocaleDateString('pt-BR')}</td>
+      <td><button class="btn-sm" onclick="changeStatus(${c.id})">Atualizar</button></td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum diagnóstico registrado.</td></tr>';
+
+  // Financeiro table
+  const finTb = document.getElementById('finTable');
+  finTb.innerHTML = clients.length ? [...clients].reverse().map(c =>
+    `<tr>
+      <td>${c.nome}</td>
+      <td>${c.data}</td>
+      <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
+      <td>PIX/Cartão</td>
+      <td><span class="badge badge-green">Pago</span></td>
+    </tr>`
+  ).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum pagamento registrado.</td></tr>';
+}
+
+/* ── Status cycle ── */
+function changeStatus(id) {
+  const clients = loadClients();
+  const idx = clients.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  const cycle = { pendente: 'em_andamento', em_andamento: 'concluido', concluido: 'pendente' };
+  clients[idx].status = cycle[clients[idx].status] || 'pendente';
+  saveClients(clients);
+  renderAll();
+  showToast('Status atualizado!');
+}
+
+/* ── Remove client ── */
+function removeClient(id) {
+  if (!confirm('Remover este cliente?')) return;
+  const clients = loadClients().filter(c => c.id !== id);
+  saveClients(clients);
+  renderAll();
+  showToast('Cliente removido.');
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
