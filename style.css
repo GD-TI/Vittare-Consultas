@@ -132,7 +132,7 @@ h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; line-height: 1.12;
   max-width: 1080px; margin: 0 auto; padding: 0 24px;
 }
 .navbar__logo-wrap { display: flex; align-items: center; gap: 10px; }
-.navbar__logo { height: 38px; width: auto; }
+.navbar__logo { height: 44px; width: auto; display: block; object-fit: contain; }
 .navbar__logo-text {
   font-family: 'Playfair Display', serif;
   font-size: 20px; font-weight: 900; color: var(--gold);
@@ -378,6 +378,84 @@ footer p+p { margin-top: 6px; }
 .form-error { font-size: 13px; color: var(--red); margin-top: 12px; display: none; }
 .form-error.show { display: block; }
 .btn-full { width: 100%; text-align: center; display: block; padding: 16px; font-size: 13px; }
+
+/* ── Testimonials ── */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 30px 28px 24px;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.testimonial-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-gold);
+}
+.testimonial-card--wide {
+  grid-column: 1 / -1;
+}
+.testimonial-quote {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 0.7;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+.testimonial-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+.testimonial-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.testimonial-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+.testimonial-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.testimonial-closing {
+  text-align: center;
+  padding: 36px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  margin-top: 8px;
+}
+.testimonial-closing p {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 2.5vw, 24px);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-style: italic;
+}
+.testimonial-closing strong {
+  color: var(--gold);
+}
+@media (max-width: 640px) {
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .testimonial-card--wide { grid-column: 1; }
+}
 
 /* ── Responsive ── */
 @media (max-width: 640px) {

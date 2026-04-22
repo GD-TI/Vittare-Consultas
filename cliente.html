@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Minha Conta | Vittare</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      padding-top: 0;
+    }
+
+    /* ── Top navbar (simplified) ── */
+    .cli-nav {
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+      transition: background 0.35s;
+    }
+    .cli-nav__logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .cli-nav__logo { height: 38px; width: auto; }
+    .cli-nav__logo-text { font-family:'Playfair Display',serif; font-size:18px; font-weight:900; color:var(--gold); }
+    .cli-nav__right { display:flex; align-items:center; gap:14px; }
+
+    /* ── Page layout ── */
+    .cli-page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── Hero greeting ── */
+    .greeting-section {
+      margin-bottom: 40px;
+    }
+    .greeting-time {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+    }
+    .greeting-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900; color: var(--text-primary);
+      margin-bottom: 10px; line-height: 1.15;
+    }
+    .greeting-sub {
+      font-size: 16px; color: var(--text-secondary); line-height: 1.65;
+    }
+
+    /* ── Status badge ── */
+    .status-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 20px;
+    }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 24px;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
+    }
+    .status-badge.online {
+      background: rgba(93,184,122,0.14);
+      border: 1px solid rgba(93,184,122,0.35);
+      color: var(--green);
+    }
+    .status-badge.offline {
+      background: rgba(232,80,80,0.1);
+      border: 1px solid rgba(232,80,80,0.3);
+      color: var(--red);
+    }
+    .status-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-badge.online .status-dot {
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(93,184,122,0.2);
+      animation: pulse-green 2s ease-in-out infinite;
+    }
+    .status-badge.offline .status-dot { background: var(--red); }
+    @keyframes pulse-green {
+      0%,100% { box-shadow: 0 0 0 3px rgba(93,184,122,0.2); }
+      50%      { box-shadow: 0 0 0 7px rgba(93,184,122,0); }
+    }
+    .status-hours { font-size: 13px; color: var(--text-muted); }
+
+    /* ── Cards grid ── */
+    .cli-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .cli-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 26px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .cli-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-gold); }
+    .cli-card--full { grid-column: 1 / -1; }
+    .cli-card__icon { font-size: 28px; margin-bottom: 14px; }
+    .cli-card__label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+    }
+    .cli-card__value { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+    .cli-card__value strong { color: var(--text-primary); }
+    .cli-card__value a {
+      color: var(--gold); text-decoration: none;
+    }
+    .cli-card__value a:hover { text-decoration: underline; }
+
+    /* ── Diagnóstico status card ── */
+    .diag-status {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 14px;
+    }
+    .diag-bar {
+      flex: 1; height: 6px; background: var(--bg-card-alt);
+      border-radius: 3px; overflow: hidden;
+    }
+    .diag-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-300), var(--gold));
+      border-radius: 3px;
+      transition: width 1s ease;
+    }
+    .diag-pct { font-size: 13px; font-weight: 700; color: var(--gold); flex-shrink: 0; }
+
+    /* ── WhatsApp button ── */
+    .wpp-card {
+      background: linear-gradient(135deg, #1a3d2b 0%, #0f2219 100%);
+      border: 1px solid rgba(37,211,102,0.25);
+      border-radius: 16px; padding: 28px 26px;
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 20px;
+      cursor: pointer; text-decoration: none;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .wpp-card:hover { border-color: rgba(37,211,102,0.5); transform: translateY(-2px); }
+    .wpp-card__icon { font-size: 42px; flex-shrink: 0; }
+    .wpp-card__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px;
+    }
+    .wpp-card__sub { font-size: 14px; color: rgba(255,255,255,0.6); }
+    .wpp-card__arrow {
+      margin-left: auto; font-size: 22px; color: #25D366; flex-shrink: 0;
+    }
+
+    /* ── Data section (profile) ── */
+    .profile-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    }
+    .profile-field { }
+    .profile-field label {
+      display: block; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 6px;
+    }
+    .profile-field .val {
+      font-size: 14px; color: var(--text-secondary);
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+    }
+
+    /* ── Logout btn ── */
+    .btn-logout {
+      background: none; border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text-muted);
+      font-family: 'Lato', sans-serif; font-size: 12px;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 16px; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── Comprar diagnóstico CTA (if not purchased) ── */
+    .buy-cta {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-strong);
+      border-radius: 16px; padding: 32px 28px;
+      text-align: center; grid-column: 1/-1;
+    }
+    .buy-cta h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; color: var(--text-primary); margin-bottom: 10px;
+    }
+    .buy-cta p { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+
+    @media (max-width: 600px) {
+      .cli-grid { grid-template-columns: 1fr; }
+      .cli-card--full { grid-column: 1; }
+      .wpp-card { grid-column: 1; }
+      .buy-cta { grid-column: 1; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .wpp-card { flex-direction: column; text-align: center; }
+      .wpp-card__arrow { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="cli-nav">
+  <a href="index.html" class="cli-nav__logo-wrap">
+    <img src="logo_dark.png" alt="Vittare" class="cli-nav__logo" id="cliNavLogo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+    <span class="cli-nav__logo-text" style="display:none">VITTARE</span>
+  </a>
+  <div class="cli-nav__right">
+    <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+      <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
+      <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
+    </button>
+    <button class="btn-logout" id="logoutBtn">Sair</button>
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="cli-page" id="cliPage">
+  <!-- Injected by JS -->
+  <p style="color:var(--text-muted);text-align:center;margin-top:80px;">Carregando...</p>
+</div>
+
+<script>
+/* ── Helpers ── */
+function getClients() { try { return JSON.parse(localStorage.getItem('vittare_clients')||'[]'); } catch { return []; } }
+function getUser()    { try { return JSON.parse(sessionStorage.getItem('vittare_user')||'null'); } catch { return null; } }
+
+/* ── Auth guard ── */
+const user = getUser();
+if (!user) { window.location.href = 'index.html'; }
+
+/* ── Theme ── */
+const html = document.documentElement;
+const saved = localStorage.getItem('vittare-theme');
+if (saved) html.setAttribute('data-theme', saved);
+
+function applyLogo(theme) {
+  const logo = document.getElementById('cliNavLogo');
+  if (logo) logo.src = theme === 'light' ? 'logo_light.png' : 'logo_dark.png';
+}
+applyLogo(html.getAttribute('data-theme') || 'dark');
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const n = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', n);
+  localStorage.setItem('vittare-theme', n);
+  applyLogo(n);
+});
+
+/* ── Logout ── */
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('vittare_user');
+  window.location.href = 'index.html';
+});
+
+/* ── Business hours check (BRT = UTC-3) ── */
+function isOpen() {
+  const now = new Date();
+  // Convert to BRT (UTC-3)
+  const brt = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  const day = brt.getDay(); // 0=Sun, 6=Sat
+  const hour = brt.getHours();
+  const isWeekday = day >= 1 && day <= 5;
+  return isWeekday && hour >= 9 && hour < 18;
+}
+
+/* ── Greeting based on time of day ── */
+function getGreeting() {
+  const now = new Date();
+  const brt = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  const h = brt.getHours();
+  if (h >= 5 && h < 12) return 'Bom dia';
+  if (h >= 12 && h < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+
+/* ── Status description ── */
+function statusLabel() {
+  const now = new Date();
+  const brt = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  const day = brt.getDay();
+  const isWeekday = day >= 1 && day <= 5;
+  if (!isWeekday) return 'Atendemos de segunda a sexta, das 9h às 18h (BRT)';
+  return 'Atendimento: segunda a sexta, 9h–18h (BRT)';
+}
+
+/* ── Diagnóstico status (from stored data) ── */
+function diagStatus(u) {
+  // Check latest status from clients store
+  const clients = getClients();
+  const fresh = clients.find(c => c.email === u.email) || u;
+  if (!fresh.comprou) return null;
+  const s = fresh.status || 'pendente';
+  const map = {
+    pendente:      { label: 'Aguardando início', pct: 15, color: '#C9A96E' },
+    em_andamento:  { label: 'Em análise',         pct: 60, color: '#E2BE6E' },
+    concluido:     { label: 'Concluído ✓',        pct: 100, color: '#5DB87A' },
+  };
+  return map[s] || map['pendente'];
+}
+
+/* ── Render ── */
+function render() {
+  if (!user) return;
+  const page = document.getElementById('cliPage');
+  const open = isOpen();
+  const diag = diagStatus(user);
+  const firstName = user.nome.split(' ')[0];
+  const WPP = 'https://api.whatsapp.com/send/?phone=5511977433408&text=Ola,%20sou%20cliente%20Vittare%20e%20gostaria%20de%20falar%20com%20a%20equipe.';
+
+  page.innerHTML = `
+    <!-- Greeting -->
+    <div class="greeting-section">
+      <p class="greeting-time">${getGreeting()},</p>
+      <h1 class="greeting-name">${user.nome} 👋</h1>
+      <p class="greeting-sub">
+        Esta é sua área exclusiva de cliente Vittare.<br>
+        Aqui você acompanha seu diagnóstico e fala diretamente com nossa equipe.
+      </p>
+
+      <!-- Online/offline status -->
+      <div class="status-row">
+        <span class="status-badge ${open ? 'online' : 'offline'}">
+          <span class="status-dot"></span>
+          ${open ? 'Equipe disponível agora' : 'Fora do horário de atendimento'}
+        </span>
+        <span class="status-hours">${statusLabel()}</span>
+      </div>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="cli-grid">
+
+      ${diag ? `
+      <!-- Diagnóstico status -->
+      <div class="cli-card cli-card--full">
+        <div class="cli-card__icon">📋</div>
+        <div class="cli-card__label">Seu Diagnóstico</div>
+        <div class="cli-card__value">
+          <strong>${diag.label}</strong>
+          <div class="diag-status">
+            <div class="diag-bar">
+              <div class="diag-bar-fill" id="diagFill" style="width:0%;background:${diag.color}"></div>
+            </div>
+            <span class="diag-pct">${diag.pct}%</span>
+          </div>
+          <p style="margin-top:12px;font-size:13px;color:var(--text-muted);">
+            ${diag.pct < 100
+              ? 'Você receberá seu resultado em até 3 dias úteis por e-mail ou WhatsApp.'
+              : 'Seu diagnóstico está pronto! Entre em contato para retirar seu relatório.'}
+          </p>
+        </div>
+      </div>
+      ` : `
+      <!-- Not purchased yet -->
+      <div class="buy-cta">
+        <h3>Você ainda não tem um diagnóstico</h3>
+        <p>Clique abaixo para adquirir o Diagnóstico Financeiro Profissional e descobrir o que está travando seu crédito.</p>
+        <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">
+          Quero Meu Diagnóstico — R$97
+        </a>
+      </div>
+      `}
+
+      <!-- WhatsApp direto -->
+      <a href="${WPP}" class="wpp-card" target="_blank" rel="noopener">
+        <span class="wpp-card__icon">💬</span>
+        <div>
+          <div class="wpp-card__title">Falar com a equipe Vittare</div>
+          <div class="wpp-card__sub">Clique para abrir o WhatsApp diretamente com nossa equipe</div>
+        </div>
+        <span class="wpp-card__arrow">→</span>
+      </a>
+
+      <!-- Telefone -->
+      <div class="cli-card">
+        <div class="cli-card__icon">📞</div>
+        <div class="cli-card__label">Telefone / WhatsApp</div>
+        <div class="cli-card__value">
+          <a href="https://api.whatsapp.com/send/?phone=5511977433408" target="_blank">
+            +55 11 97743-3408
+          </a>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="cli-card">
+        <div class="cli-card__icon">✉️</div>
+        <div class="cli-card__label">E-mail</div>
+        <div class="cli-card__value">
+          <a href="mailto:vittarecapital@gmail.com">vittarecapital@gmail.com</a>
+        </div>
+      </div>
+
+      <!-- Dados do perfil -->
+      <div class="cli-card cli-card--full">
+        <div class="cli-card__icon">👤</div>
+        <div class="cli-card__label">Seus Dados</div>
+        <div class="profile-grid" style="margin-top:14px;">
+          <div class="profile-field">
+            <label>Nome</label>
+            <div class="val">${user.nome}</div>
+          </div>
+          <div class="profile-field">
+            <label>E-mail</label>
+            <div class="val">${user.email}</div>
+          </div>
+          <div class="profile-field">
+            <label>Telefone</label>
+            <div class="val">${user.tel || '—'}</div>
+          </div>
+          <div class="profile-field">
+            <label>Data de Nascimento</label>
+            <div class="val">${user.nasc ? new Date(user.nasc + 'T12:00:00').toLocaleDateString('pt-BR') : '—'}</div>
+          </div>
+          <div class="profile-field" style="grid-column:1/-1">
+            <label>Endereço</label>
+            <div class="val">${user.end || '—'}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:16px;">
+      <a href="index.html" style="color:var(--gold);text-decoration:none;">← Voltar ao site</a>
+    </p>
+  `;
+
+  // Animate progress bar
+  setTimeout(() => {
+    const fill = document.getElementById('diagFill');
+    if (fill && diag) fill.style.width = diag.pct + '%';
+  }, 150);
+}
+
+render();
+</script>
+</body>
+</html>

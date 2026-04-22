@@ -6,15 +6,98 @@
   <title>Diagnóstico Financeiro Profissional | Vittare</title>
   <meta name="description" content="Descubra o que está travando seu crédito. Diagnóstico financeiro profissional baseado nos mesmos sistemas que os bancos usam."/>
 
-  <!-- Favicon "V" dourado — aparece na aba do navegador -->
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Vittare logo como favicon na aba do navegador -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="shortcut icon" href="favicon.svg"/>
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet"/>
-
   <link rel="stylesheet" href="style.css"/>
+
+  <style>
+    /* ── Live / Muted badge ── */
+    .video-mute-btn {
+      position: absolute; top: 14px; right: 14px; z-index: 10;
+      background: rgba(232,50,50,0.92);
+      border: none; border-radius: 20px;
+      color: #fff; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 6px 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      animation: pulse-red 1.4s ease-in-out infinite;
+      transition: background 0.2s;
+    }
+    .video-mute-btn:hover { background: rgba(200,30,30,0.98); animation: none; }
+    .video-mute-btn.muted { background: rgba(232,50,50,0.92); }
+    .video-mute-btn.unmuted { background: rgba(50,160,50,0.92); animation: none; }
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232,50,50,0.5); }
+      50%       { box-shadow: 0 0 0 8px rgba(232,50,50,0); }
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #fff;
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Custom video controls ── */
+    .video-controls {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      padding: 24px 14px 14px;
+      display: flex; align-items: center; gap: 10px;
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .video-wrapper:hover .video-controls { opacity: 1; }
+    .vc-btn {
+      background: none; border: none; color: #fff;
+      font-size: 16px; cursor: pointer; padding: 4px; line-height: 1;
+      flex-shrink: 0;
+    }
+    .vc-progress {
+      flex: 1; height: 4px; background: rgba(255,255,255,0.3);
+      border-radius: 2px; cursor: pointer; position: relative;
+    }
+    .vc-progress-fill {
+      height: 100%; background: var(--gold); border-radius: 2px;
+      width: 0%; pointer-events: none;
+    }
+    .vc-time { font-size: 11px; color: rgba(255,255,255,0.8); flex-shrink: 0; }
+
+    /* ── Sobre Nós ── */
+    .sobre-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+      margin-top: 36px;
+    }
+    .sobre-item {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px 22px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .sobre-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .sobre-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .sobre-value { font-size: 15px; color: var(--text-secondary); }
+    .sobre-value a { color: var(--gold); text-decoration: none; }
+    .sobre-value a:hover { text-decoration: underline; }
+    @media (max-width:640px) { .sobre-grid { grid-template-columns:1fr; } }
+
+    /* ── Login modal tabs ── */
+    .modal-tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid var(--border); }
+    .modal-tab {
+      flex: 1; background: none; border: none; padding: 12px 8px;
+      font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; transition: all 0.2s;
+    }
+    .modal-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Register form ── */
+    .register-note { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+  </style>
 </head>
 <body>
 
@@ -23,51 +106,98 @@
 ══════════════════════════════════ -->
 <nav class="navbar">
   <div class="navbar__inner">
-    <div class="navbar__logo-wrap">
-      <img src="logo.png" alt="Vittare" class="navbar__logo"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
-      <span class="navbar__logo-text" style="display:none">VITTARE</span>
-    </div>
+    <a href="index.html" class="navbar__logo-wrap" style="text-decoration:none;">
+      <img src="logo_dark.png" alt="Vittare" class="navbar__logo" id="navLogo"/>
+      <span class="navbar__logo-text" id="navLogoFallback" style="display:none">VITTARE</span>
+    </a>
 
     <div class="navbar__actions">
-      <!-- Theme toggle -->
       <button class="theme-toggle" id="themeToggle" title="Alternar tema" aria-label="Alternar tema claro/escuro">
         <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
         <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
       </button>
-
-      <!-- Login -->
-      <a href="#" class="btn-login-nav" id="openLogin">
-        <span>Entrar</span>
-      </a>
+      <a href="#" class="btn-login-nav" id="openLogin"><span>Entrar</span></a>
     </div>
   </div>
 </nav>
 
 
 <!-- ══════════════════════════════════
-     LOGIN MODAL
+     LOGIN MODAL (Cliente + Admin tabs)
 ══════════════════════════════════ -->
-<div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+<div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true">
   <div class="modal-box">
     <button class="modal-close" id="closeLogin" aria-label="Fechar">✕</button>
-    <h2 id="loginTitle">Acessar minha conta</h2>
-    <p class="modal-sub">Entre para acompanhar seu diagnóstico</p>
+    <h2 style="margin-bottom:4px;">Acessar minha conta</h2>
 
-    <div class="form-group">
-      <label for="loginEmail">E-mail</label>
-      <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email"/>
+    <!-- Tabs -->
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-tab="cliente">Sou Cliente</button>
+      <button class="modal-tab" data-tab="cadastro">Criar Conta</button>
+      <button class="modal-tab" data-tab="admin">Admin</button>
     </div>
-    <div class="form-group">
-      <label for="loginPass">Senha</label>
-      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <p class="form-error" id="loginError">E-mail ou senha incorretos.</p>
 
-    <button class="btn-primary btn-full" id="loginBtn" style="margin-top:8px;">Entrar</button>
-    <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:16px;">
-      Acesso exclusivo para clientes. <br>Após a compra, você receberá as credenciais.
-    </p>
+    <!-- TAB: LOGIN CLIENTE -->
+    <div class="tab-panel active" id="tab-cliente">
+      <div class="form-group">
+        <label for="cliEmail">E-mail</label>
+        <input type="email" id="cliEmail" placeholder="seu@email.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label for="cliPass">Senha</label>
+        <input type="password" id="cliPass" placeholder="••••••••"/>
+      </div>
+      <p class="form-error" id="cliError">E-mail ou senha incorretos.</p>
+      <button class="btn-primary btn-full" id="cliLoginBtn" style="margin-top:8px;">Entrar</button>
+      <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:16px;">
+        Não tem conta? Clique em <strong style="color:var(--gold);">Criar Conta</strong> acima.
+      </p>
+    </div>
+
+    <!-- TAB: CADASTRO CLIENTE -->
+    <div class="tab-panel" id="tab-cadastro">
+      <p class="register-note">Crie seu acesso. Após a compra, você poderá acompanhar seu diagnóstico por aqui.</p>
+      <div class="form-group">
+        <label>Nome Completo</label>
+        <input type="text" id="regNome" placeholder="Seu nome completo"/>
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="regEmail" placeholder="seu@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>Telefone / WhatsApp</label>
+        <input type="text" id="regTel" placeholder="(11) 99999-9999"/>
+      </div>
+      <div class="form-group">
+        <label>Data de Nascimento</label>
+        <input type="date" id="regNasc"/>
+      </div>
+      <div class="form-group">
+        <label>Endereço Completo</label>
+        <input type="text" id="regEnd" placeholder="Rua, número, bairro, cidade – UF"/>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="regPass" placeholder="Crie uma senha"/>
+      </div>
+      <p class="form-error" id="regError"></p>
+      <button class="btn-primary btn-full" id="regBtn" style="margin-top:8px;">Criar Conta</button>
+    </div>
+
+    <!-- TAB: ADMIN -->
+    <div class="tab-panel" id="tab-admin">
+      <div class="form-group">
+        <label for="adminEmail">E-mail Admin</label>
+        <input type="email" id="adminEmail" placeholder="admin@vittare.com"/>
+      </div>
+      <div class="form-group">
+        <label for="adminPass">Senha</label>
+        <input type="password" id="adminPass" placeholder="••••••••"/>
+      </div>
+      <p class="form-error" id="adminError">Credenciais incorretas.</p>
+      <button class="btn-primary btn-full" id="adminLoginBtn" style="margin-top:8px;">Entrar como Admin</button>
+    </div>
   </div>
 </div>
 
@@ -92,20 +222,31 @@
 
 
 <!-- ══════════════════════════════════
-     VÍDEO (9:16)
+     VÍDEO (9:16) — autoplay mudo, barra de controle
 ══════════════════════════════════ -->
 <section class="video-section">
   <div class="container">
     <div class="video-wrapper" id="videoWrapper">
-      <video id="mainVideo" playsinline preload="metadata">
-        <source src="img-3944_qVjo0ep5.mp4" type="video/mp4"/>
+      <video id="mainVideo" playsinline preload="auto" muted autoplay loop>
+        <source src="IMG_3944.mp4" type="video/mp4"/>
         Seu navegador não suporta vídeo HTML5.
       </video>
 
-      <!-- Overlay de play customizado -->
-      <div class="video-overlay" id="videoOverlay">
-        <div class="video-play-btn">▶</div>
-        <p>Clique para assistir</p>
+      <!-- Botão mudo piscando -->
+      <button class="video-mute-btn muted" id="muteBtn">
+        <span class="pulse-dot"></span>
+        🔇 Toque para ouvir
+      </button>
+
+      <!-- Controles customizados -->
+      <div class="video-controls" id="videoControls">
+        <button class="vc-btn" id="vcPlayBtn">⏸</button>
+        <div class="vc-progress" id="vcProgress">
+          <div class="vc-progress-fill" id="vcFill"></div>
+        </div>
+        <span class="vc-time" id="vcTime">0:00</span>
+        <button class="vc-btn" id="vcMute">🔇</button>
+        <button class="vc-btn" id="vcFull">⛶</button>
       </div>
     </div>
 
@@ -140,7 +281,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Descubra o Motivo Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Descubra o Motivo Agora</a>
     </div>
   </div>
 </section>
@@ -152,8 +293,7 @@
 <section>
   <div class="container">
     <h2 class="section-h2">
-      Os bancos não olham<br>
-      só se seu nome está <span class="gold-italic">"limpo"…</span>
+      Os bancos não olham<br>só se seu nome está <span class="gold-italic">"limpo"…</span>
     </h2>
     <p class="section-sub">Eles usam sistemas internos que mostram MUITO mais sobre você do que apenas SPC e Serasa.</p>
 
@@ -174,7 +314,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Ver o que os bancos enxergam sobre mim</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Ver o que os bancos enxergam sobre mim</a>
     </div>
   </div>
 </section>
@@ -207,7 +347,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
@@ -249,7 +389,7 @@
         <li><span class="icon-chk">✓</span> Orientação inicial sobre o que precisa ser ajustado primeiro</li>
       </ul>
 
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary btn-full" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary btn-full" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
     </div>
 
     <p class="trust-bar">Pagamento seguro &bull; Atendimento individual &bull; Acesso em 3 dias úteis</p>
@@ -295,18 +435,18 @@
     </div>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
 
 
 <!-- ══════════════════════════════════
-     DEPOIMENTOS / PROVA SOCIAL
+     DEPOIMENTOS
 ══════════════════════════════════ -->
 <section id="depoimentos">
   <div class="container">
-    <p class="label-tag" style="text-align:center;">Prova Social</p>
+    <p class="label-tag" style="text-align:center;">Depoimentos</p>
     <h2 class="section-h2" style="text-align:center;margin-bottom:10px;">
       O que as pessoas descobrem quando entendem<br>
       <span class="gold-italic">como o sistema funciona</span>
@@ -320,7 +460,7 @@
         <p class="testimonial-text">Meu nome sempre foi limpo, mas eu nunca conseguia crédito. Eu não entendia o porquê. Depois da análise, descobri que o problema não era dívida… era como o sistema me classificava. Foi a primeira vez que eu realmente entendi minha situação.</p>
         <div class="testimonial-footer">
           <span class="testimonial-dot"></span>
-          <span class="testimonial-label">Cliente verificado</span>
+          <span class="testimonial-label">Mariana Alves Souza, 34 anos – SP</span>
         </div>
       </div>
 
@@ -329,7 +469,7 @@
         <p class="testimonial-text">Eu já tinha sido negado várias vezes e comecei a evitar pedir crédito. Parecia que nunca dava certo. Quando vi o diagnóstico, entendi exatamente o que aparecia no meu CPF. Hoje eu não tento mais no escuro.</p>
         <div class="testimonial-footer">
           <span class="testimonial-dot"></span>
-          <span class="testimonial-label">Cliente verificado</span>
+          <span class="testimonial-label">Carlos Eduardo Ribeiro, 41 anos – MG</span>
         </div>
       </div>
 
@@ -338,7 +478,7 @@
         <p class="testimonial-text">O gerente só falava "perfil não aprovado" e nunca explicava nada. Eu achava que era renda. Mas depois da análise, vi que tinha outros fatores pesando. Isso mudou totalmente minha visão.</p>
         <div class="testimonial-footer">
           <span class="testimonial-dot"></span>
-          <span class="testimonial-label">Cliente verificado</span>
+          <span class="testimonial-label">Juliana Martins Costa, 29 anos – RJ</span>
         </div>
       </div>
 
@@ -347,7 +487,7 @@
         <p class="testimonial-text">Eu pagava tudo em dia, mas meu limite nunca aumentava. Achava que era normal. Depois que entendi meu rating, tudo fez sentido. Eu estava sendo visto de uma forma completamente diferente do que eu imaginava.</p>
         <div class="testimonial-footer">
           <span class="testimonial-dot"></span>
-          <span class="testimonial-label">Cliente verificado</span>
+          <span class="testimonial-label">Rodrigo Henrique Lima, 37 anos – PR</span>
         </div>
       </div>
 
@@ -356,7 +496,7 @@
         <p class="testimonial-text">Eu não fazia ideia de como os bancos enxergavam meu CPF. Depois da análise, ficou claro o que estava me travando. Hoje eu sei exatamente o que ajustar.</p>
         <div class="testimonial-footer">
           <span class="testimonial-dot"></span>
-          <span class="testimonial-label">Cliente verificado</span>
+          <span class="testimonial-label">Fernanda Gomes Batista, 32 anos – BA</span>
         </div>
       </div>
 
@@ -404,7 +544,54 @@
     </ul>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     SOBRE NÓS
+══════════════════════════════════ -->
+<section id="sobre">
+  <div class="container">
+    <p class="label-tag">Sobre nós</p>
+    <h2 class="section-h2">Fale com a <span class="gold-italic">Vittare</span></h2>
+    <p class="section-sub">Estamos aqui para tirar suas dúvidas e ajudar você a entender sua situação financeira.</p>
+
+    <div class="sobre-grid">
+      <div class="sobre-item">
+        <span class="sobre-icon">📍</span>
+        <div>
+          <div class="sobre-label">Localização</div>
+          <div class="sobre-value">R. Murutinga do Sul, 47<br>Vila Moreira</div>
+        </div>
+      </div>
+      <div class="sobre-item">
+        <span class="sobre-icon">📞</span>
+        <div>
+          <div class="sobre-label">Telefone / WhatsApp</div>
+          <div class="sobre-value">
+            <a href="https://api.whatsapp.com/send/?phone=5511977433408" target="_blank">+55 11 97743-3408</a>
+          </div>
+        </div>
+      </div>
+      <div class="sobre-item">
+        <span class="sobre-icon">✉️</span>
+        <div>
+          <div class="sobre-label">E-mail</div>
+          <div class="sobre-value">
+            <a href="mailto:vittarecapital@gmail.com">vittarecapital@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="sobre-item">
+        <span class="sobre-icon">🕐</span>
+        <div>
+          <div class="sobre-label">Horário de Atendimento</div>
+          <div class="sobre-value">Seg – Sex: 9h às 18h</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -432,84 +619,194 @@
      JAVASCRIPT
 ══════════════════════════════════ -->
 <script>
-/* ── Theme Toggle ── */
-const html = document.documentElement;
-const themeBtn = document.getElementById('themeToggle');
+/* ── Data store helpers ── */
+function getClients() { try { return JSON.parse(localStorage.getItem('vittare_clients')||'[]'); } catch { return []; } }
+function saveClients(a) { localStorage.setItem('vittare_clients', JSON.stringify(a)); }
+function getCurrentUser() { try { return JSON.parse(sessionStorage.getItem('vittare_user')||'null'); } catch { return null; } }
 
-// Persist preference
+/* ── Theme ── */
+const html = document.documentElement;
 const saved = localStorage.getItem('vittare-theme');
 if (saved) html.setAttribute('data-theme', saved);
 
-themeBtn.addEventListener('click', () => {
-  const current = html.getAttribute('data-theme') || 'dark';
-  const next = current === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('vittare-theme', next);
+function applyThemeLogo(theme) {
+  const logo = document.getElementById('navLogo');
+  const fallback = document.getElementById('navLogoFallback');
+  if (!logo) return;
+  const src = theme === 'light' ? 'logo_light.png' : 'logo_dark.png';
+  logo.src = src;
+  logo.onerror = () => { logo.style.display='none'; if(fallback) fallback.style.display='block'; };
+  logo.onload  = () => { logo.style.display='block'; if(fallback) fallback.style.display='none'; };
+}
+applyThemeLogo(html.getAttribute('data-theme') || 'dark');
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const n = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', n);
+  localStorage.setItem('vittare-theme', n);
+  applyThemeLogo(n);
 });
 
-/* ── Video Player ── */
-const video   = document.getElementById('mainVideo');
-const overlay = document.getElementById('videoOverlay');
+/* ── Video: autoplay mudo + botão mute + controles ── */
+const vid = document.getElementById('mainVideo');
+const muteBtn = document.getElementById('muteBtn');
+const vcPlay = document.getElementById('vcPlayBtn');
+const vcFill = document.getElementById('vcFill');
+const vcTime = document.getElementById('vcTime');
+const vcMute = document.getElementById('vcMute');
+const vcFull = document.getElementById('vcFull');
+const vcProgress = document.getElementById('vcProgress');
 
-overlay.addEventListener('click', () => {
-  overlay.classList.add('hidden');
-  video.play().catch(() => {
-    // autoplay blocked — show controls
-    video.controls = true;
-    overlay.classList.remove('hidden');
-  });
+// Autoplay
+vid.muted = true;
+vid.play().catch(()=>{});
+
+function fmtTime(s) {
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return m+':'+(sec<10?'0':'')+sec;
+}
+
+muteBtn.addEventListener('click', () => {
+  vid.muted = !vid.muted;
+  muteBtn.classList.toggle('muted', vid.muted);
+  muteBtn.classList.toggle('unmuted', !vid.muted);
+  muteBtn.innerHTML = vid.muted
+    ? '<span class="pulse-dot"></span>🔇 Toque para ouvir'
+    : '🔊 Com som';
+  vcMute.textContent = vid.muted ? '🔇' : '🔊';
 });
 
-video.addEventListener('click', () => {
-  if (video.paused) {
-    video.play();
-    overlay.classList.add('hidden');
-  } else {
-    video.pause();
-    overlay.classList.remove('hidden');
-  }
+vcMute.addEventListener('click', () => muteBtn.click());
+
+vcPlay.addEventListener('click', () => {
+  if (vid.paused) { vid.play(); vcPlay.textContent = '⏸'; }
+  else { vid.pause(); vcPlay.textContent = '▶'; }
 });
 
-video.addEventListener('ended', () => {
-  overlay.classList.remove('hidden');
+vid.addEventListener('timeupdate', () => {
+  if (!vid.duration) return;
+  const pct = (vid.currentTime / vid.duration) * 100;
+  vcFill.style.width = pct + '%';
+  vcTime.textContent = fmtTime(vid.currentTime) + ' / ' + fmtTime(vid.duration);
+});
+
+vcProgress.addEventListener('click', e => {
+  const rect = vcProgress.getBoundingClientRect();
+  vid.currentTime = ((e.clientX - rect.left) / rect.width) * vid.duration;
+});
+
+vcFull.addEventListener('click', () => {
+  if (vid.requestFullscreen) vid.requestFullscreen();
+  else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
 });
 
 /* ── Login Modal ── */
-const modal      = document.getElementById('loginModal');
-const openBtn    = document.getElementById('openLogin');
-const closeBtn   = document.getElementById('closeLogin');
-const loginBtn   = document.getElementById('loginBtn');
-const errorMsg   = document.getElementById('loginError');
-
-openBtn.addEventListener('click', e => {
-  e.preventDefault();
-  modal.classList.add('active');
-});
-closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+const modal = document.getElementById('loginModal');
+document.getElementById('openLogin').addEventListener('click', e => { e.preventDefault(); modal.classList.add('active'); });
+document.getElementById('closeLogin').addEventListener('click', () => modal.classList.remove('active'));
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
 
-// Credentials — change these before publishing
+// Tabs
+document.querySelectorAll('.modal-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Admin login
 const ADMIN_EMAIL = 'admin@vittare.com';
 const ADMIN_PASS  = 'Vittare@2026';
-
-loginBtn.addEventListener('click', () => {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass  = document.getElementById('loginPass').value;
-
-  if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+document.getElementById('adminLoginBtn').addEventListener('click', () => {
+  const e = document.getElementById('adminEmail').value.trim();
+  const p = document.getElementById('adminPass').value;
+  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
+    sessionStorage.setItem('vittare_admin','1');
     window.location.href = 'admin.html';
   } else {
-    errorMsg.classList.add('show');
+    document.getElementById('adminError').classList.add('show');
   }
 });
 
-document.getElementById('loginEmail').addEventListener('input', () => errorMsg.classList.remove('show'));
-document.getElementById('loginPass').addEventListener('input',  () => errorMsg.classList.remove('show'));
-
-// Enter key in password
-document.getElementById('loginPass').addEventListener('keydown', e => {
-  if (e.key === 'Enter') loginBtn.click();
+// Client login
+document.getElementById('cliLoginBtn').addEventListener('click', () => {
+  const e = document.getElementById('cliEmail').value.trim();
+  const p = document.getElementById('cliPass').value;
+  const clients = getClients();
+  const user = clients.find(c => c.email === e && c.senha === p);
+  if (user) {
+    sessionStorage.setItem('vittare_user', JSON.stringify(user));
+    window.location.href = 'cliente.html';
+  } else {
+    document.getElementById('cliError').classList.add('show');
+  }
 });
+
+// Register
+document.getElementById('regBtn').addEventListener('click', () => {
+  const nome  = document.getElementById('regNome').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const tel   = document.getElementById('regTel').value.trim();
+  const nasc  = document.getElementById('regNasc').value;
+  const end   = document.getElementById('regEnd').value.trim();
+  const senha = document.getElementById('regPass').value;
+  const errEl = document.getElementById('regError');
+
+  if (!nome||!email||!tel||!nasc||!end||!senha) {
+    errEl.textContent = 'Preencha todos os campos.'; errEl.classList.add('show'); return;
+  }
+  const clients = getClients();
+  if (clients.find(c => c.email === email)) {
+    errEl.textContent = 'E-mail já cadastrado.'; errEl.classList.add('show'); return;
+  }
+  const user = { id: Date.now(), nome, email, tel, nasc, end, senha, comprou: false, data: new Date().toLocaleDateString('pt-BR') };
+  clients.push(user);
+  saveClients(clients);
+  sessionStorage.setItem('vittare_user', JSON.stringify(user));
+  window.location.href = 'cliente.html';
+});
+
+/* ── Check login before buy ── */
+function checkLoginBeforeBuy(e) {
+  const user = getCurrentUser();
+  if (!user) {
+    e.preventDefault();
+    modal.classList.add('active');
+    showToast('⚠ Faça login ou crie sua conta antes de comprar.');
+    return false;
+  }
+  // Logged in — let the payment link open normally (target="_blank")
+  // obrigado.html is only accessible after payment confirmation, not from here
+}
+window.checkLoginBeforeBuy = checkLoginBeforeBuy;
+
+/* ── Toast ── */
+function showToast(msg) {
+  let t = document.getElementById('siteToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'siteToast';
+    t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:999;background:var(--bg-card);border:1.5px solid var(--gold);border-radius:10px;padding:14px 20px;font-size:14px;color:var(--text-primary);box-shadow:var(--shadow);transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:300px;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  requestAnimationFrame(() => { t.style.transform = 'translateY(0)'; t.style.opacity = '1'; });
+  setTimeout(() => { t.style.transform = 'translateY(80px)'; t.style.opacity = '0'; }, 3500);
+}
+
+/* ── Check if already logged in ── */
+const loggedUser = getCurrentUser();
+if (loggedUser) {
+  const loginLink = document.getElementById('openLogin');
+  loginLink.textContent = 'Minha Conta';
+  loginLink.href = 'cliente.html';
+  loginLink.removeEventListener && loginLink.replaceWith(loginLink.cloneNode(true));
+  document.getElementById('openLogin').addEventListener('click', e => {
+    e.preventDefault(); window.location.href = 'cliente.html';
+  });
+}
 
 /* ── FAQ ── */
 document.querySelectorAll('.faq-q').forEach(btn => {
