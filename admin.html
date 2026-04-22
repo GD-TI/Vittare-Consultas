@@ -208,6 +208,7 @@
     </div>
     <p class="form-error" id="gError">Credenciais incorretas.</p>
     <button class="btn-primary btn-full" id="gLoginBtn" style="margin-top:8px;">Entrar no Painel</button>
+    <button id="quickLoginBtn" style="margin-top:10px;width:100%;background:rgba(201,169,110,0.1);border:1px solid var(--border-strong);border-radius:8px;padding:11px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);cursor:pointer;font-family:'Lato',sans-serif;transition:background 0.2s;">⚡ Login Rápido (Admin)</button>
     <p style="text-align:center;margin-top:16px;">
       <a href="index.html" style="font-size:13px;color:var(--text-muted);text-decoration:none;">← Voltar ao site</a>
     </p>
@@ -250,6 +251,9 @@
         <div class="nav-group-title">Sistema</div>
         <a class="nav-item" data-page="config">
           <span class="nav-icon">⚙️</span> Configurações
+        </a>
+        <a class="nav-item" id="previewObrigado" style="cursor:pointer;">
+          <span class="nav-icon">🎉</span> Prévia Obrigado
         </a>
       </nav>
 
@@ -494,70 +498,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── Credentials (mesmas do index.html) ── */
+/* ════════════════════════════════════
+   VITTARE ADMIN — JS completo
+════════════════════════════════════ */
+
 const ADMIN_EMAIL = 'admin@vittare.com';
 const ADMIN_PASS  = 'Vittare@2026';
 
-/* ── Auth ── */
-const isLogged = sessionStorage.getItem('vittare_admin');
-if (isLogged === '1') boot();
-
-document.getElementById('gLoginBtn').addEventListener('click', () => {
-  const e = document.getElementById('gEmail').value.trim();
-  const p = document.getElementById('gPass').value;
-  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
-    sessionStorage.setItem('vittare_admin', '1');
-    boot();
-  } else {
-    document.getElementById('gError').classList.add('show');
-  }
-});
-document.getElementById('gPass').addEventListener('keydown', ev => { if (ev.key === 'Enter') document.getElementById('gLoginBtn').click(); });
-document.getElementById('gEmail').addEventListener('input', () => document.getElementById('gError').classList.remove('show'));
-
-function boot() {
-  document.getElementById('authGate').style.display = 'none';
-  document.getElementById('adminPanel').style.display = 'block';
-  renderAll();
-}
-
-/* ── Theme ── */
-const html = document.documentElement;
-const saved = localStorage.getItem('vittare-theme');
-if (saved) html.setAttribute('data-theme', saved);
-
-['adminThemeToggle','cfgThemeToggle'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('click', () => {
-    const cur = html.getAttribute('data-theme') || 'dark';
-    const nxt = cur === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', nxt);
-    localStorage.setItem('vittare-theme', nxt);
-  });
-});
-
-/* ── Navigation ── */
-function goPage(page) {
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
-  const navEl = document.querySelector(`[data-page="${page}"]`);
-  if (navEl) navEl.classList.add('active');
-  const pageEl = document.getElementById(`page-${page}`);
-  if (pageEl) pageEl.classList.add('active');
-  const titles = { dashboard:'Dashboard', clientes:'Clientes', diagnosticos:'Diagnósticos', novo:'Novo Cliente', financeiro:'Financeiro', config:'Configurações' };
-  document.getElementById('topbarTitle').textContent = titles[page] || page;
-}
-
-document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-  item.addEventListener('click', () => goPage(item.dataset.page));
-});
-
-document.getElementById('sidebarLogout').addEventListener('click', () => {
-  sessionStorage.removeItem('vittare_admin');
-  window.location.href = 'index.html';
-});
-
-/* ── Data Store (localStorage) ── */
+/* ── Helpers de dados ── */
 function loadClients() {
   try { return JSON.parse(localStorage.getItem('vittare_clients') || '[]'); } catch { return []; }
 }
@@ -565,111 +513,37 @@ function saveClients(arr) {
   localStorage.setItem('vittare_clients', JSON.stringify(arr));
 }
 
-/* ── Save new client ── */
-document.getElementById('salvarCliente').addEventListener('click', () => {
-  const nome   = document.getElementById('nc-nome').value.trim();
-  const cpf    = document.getElementById('nc-cpf').value.trim();
-  const email  = document.getElementById('nc-email').value.trim();
-  const tel    = document.getElementById('nc-tel').value.trim();
-  const valor  = parseFloat(document.getElementById('nc-valor').value) || 97;
-  const status = document.getElementById('nc-status').value;
-  const obs    = document.getElementById('nc-obs').value.trim();
+/* ── Theme (pode rodar antes do DOM completo) ── */
+const html = document.documentElement;
+const savedTheme = localStorage.getItem('vittare-theme');
+if (savedTheme) html.setAttribute('data-theme', savedTheme);
 
-  if (!nome || !cpf) { showToast('⚠ Preencha nome e CPF!'); return; }
-
-  const clients = loadClients();
-  const now = new Date();
-  clients.push({
-    id: Date.now(),
-    nome, cpf, email, tel, valor, status, obs,
-    data: now.toLocaleDateString('pt-BR'),
-    dataSt: now.toISOString(),
-  });
-  saveClients(clients);
-
-  // Clear form
-  ['nc-nome','nc-cpf','nc-email','nc-tel','nc-valor','nc-obs'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('nc-status').value = 'pendente';
-
-  showToast('✅ Cliente salvo com sucesso!');
-  renderAll();
-  goPage('clientes');
-});
-
-/* ── Render all tables ── */
-function renderAll() {
-  const clients = loadClients();
-
-  // Stats
-  const pendentes = clients.filter(c => c.status === 'pendente').length;
-  const concluidos = clients.filter(c => c.status === 'concluido').length;
-  const receita = clients.reduce((s, c) => s + (c.valor || 0), 0);
-
-  document.getElementById('stat-clientes').textContent  = clients.length;
-  document.getElementById('stat-pendentes').textContent = pendentes;
-  document.getElementById('stat-concluidos').textContent= concluidos;
-  document.getElementById('stat-receita').textContent   = 'R$' + receita.toLocaleString('pt-BR');
-  document.getElementById('fin-total').textContent      = 'R$' + receita.toLocaleString('pt-BR');
-  document.getElementById('fin-mes').textContent        = 'R$' + receita.toLocaleString('pt-BR');
-  document.getElementById('fin-qtd').textContent        = clients.length;
-
-  // Badge helper
-  const badgeStatus = s => {
-    if (s === 'concluido')    return '<span class="badge badge-green">Concluído</span>';
-    if (s === 'em_andamento') return '<span class="badge badge-gold">Em Andamento</span>';
-    return '<span class="badge badge-muted">Pendente</span>';
-  };
-
-  // Dashboard table (last 5)
-  const last5 = [...clients].reverse().slice(0, 5);
-  const dashTb = document.getElementById('dashTable');
-  dashTb.innerHTML = last5.length ? last5.map(c =>
-    `<tr><td>${c.nome}</td><td>${c.cpf}</td><td>${c.data}</td><td>${badgeStatus(c.status)}</td><td>R$ ${c.valor.toLocaleString('pt-BR')}</td></tr>`
-  ).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum cliente cadastrado ainda.</td></tr>';
-
-  // Clients table
-  const cliTb = document.getElementById('clientesTable');
-  cliTb.innerHTML = clients.length ? [...clients].reverse().map(c =>
-    `<tr>
-      <td>${c.nome}</td>
-      <td>${c.email || '—'}</td>
-      <td>${c.cpf}</td>
-      <td>${c.tel || '—'}</td>
-      <td>${badgeStatus(c.status)}</td>
-      <td>
-        <button class="btn-sm" onclick="changeStatus(${c.id})">Status</button>
-        <button class="btn-sm btn-sm-danger" onclick="removeClient(${c.id})">Excluir</button>
-      </td>
-    </tr>`
-  ).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum cliente cadastrado.</td></tr>';
-
-  // Diagnósticos table
-  const diagTb = document.getElementById('diagTable');
-  diagTb.innerHTML = clients.length ? [...clients].reverse().map(c => {
-    const prazo = new Date(new Date(c.dataSt).getTime() + 3*24*60*60*1000);
-    return `<tr>
-      <td>${c.nome}</td>
-      <td>${c.data}</td>
-      <td>${badgeStatus(c.status)}</td>
-      <td>${c.status === 'concluido' ? '—' : prazo.toLocaleDateString('pt-BR')}</td>
-      <td><button class="btn-sm" onclick="changeStatus(${c.id})">Atualizar</button></td>
-    </tr>`;
-  }).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum diagnóstico registrado.</td></tr>';
-
-  // Financeiro table
-  const finTb = document.getElementById('finTable');
-  finTb.innerHTML = clients.length ? [...clients].reverse().map(c =>
-    `<tr>
-      <td>${c.nome}</td>
-      <td>${c.data}</td>
-      <td>R$ ${c.valor.toLocaleString('pt-BR')}</td>
-      <td>PIX/Cartão</td>
-      <td><span class="badge badge-green">Pago</span></td>
-    </tr>`
-  ).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:28px;">Nenhum pagamento registrado.</td></tr>';
+/* ── Toast (global, usada em onclick inline) ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ── Status cycle ── */
+/* ── Navegação entre páginas (global, usada em onclick inline) ── */
+function goPage(page) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+  const navEl = document.querySelector(`[data-page="${page}"]`);
+  if (navEl) navEl.classList.add('active');
+  const pageEl = document.getElementById(`page-${page}`);
+  if (pageEl) pageEl.classList.add('active');
+  const titles = {
+    dashboard:'Dashboard', clientes:'Clientes', diagnosticos:'Diagnósticos',
+    novo:'Novo Cliente', financeiro:'Financeiro', config:'Configurações'
+  };
+  const titleEl = document.getElementById('topbarTitle');
+  if (titleEl) titleEl.textContent = titles[page] || page;
+}
+
+/* ── Cycle de status (global, usada em onclick inline) ── */
 function changeStatus(id) {
   const clients = loadClients();
   const idx = clients.findIndex(c => c.id === id);
@@ -681,7 +555,7 @@ function changeStatus(id) {
   showToast('Status atualizado!');
 }
 
-/* ── Remove client ── */
+/* ── Remover cliente (global, usada em onclick inline) ── */
 function removeClient(id) {
   if (!confirm('Remover este cliente?')) return;
   const clients = loadClients().filter(c => c.id !== id);
@@ -690,13 +564,215 @@ function removeClient(id) {
   showToast('Cliente removido.');
 }
 
-/* ── Toast ── */
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+/* ── Badge helper ── */
+function badgeStatus(s) {
+  if (s === 'concluido')    return '<span class="badge badge-green">Concluído</span>';
+  if (s === 'em_andamento') return '<span class="badge badge-gold">Em Andamento</span>';
+  return '<span class="badge badge-muted">Pendente</span>';
 }
+
+/* ── Renderizar todas as tabelas e stats ── */
+function renderAll() {
+  const clients = loadClients();
+
+  const pendentes  = clients.filter(c => c.status === 'pendente').length;
+  const concluidos = clients.filter(c => c.status === 'concluido').length;
+  const receita    = clients.reduce((s, c) => s + (Number(c.valor) || 0), 0);
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('stat-clientes',   clients.length);
+  set('stat-pendentes',  pendentes);
+  set('stat-concluidos', concluidos);
+  set('stat-receita',    'R$' + receita.toLocaleString('pt-BR'));
+  set('fin-total',       'R$' + receita.toLocaleString('pt-BR'));
+  set('fin-mes',         'R$' + receita.toLocaleString('pt-BR'));
+  set('fin-qtd',         clients.length);
+
+  const empty = (cols, msg) =>
+    `<tr><td colspan="${cols}" style="text-align:center;color:var(--text-muted);padding:28px;">${msg}</td></tr>`;
+
+  /* Dashboard — últimos 5 */
+  const dashTb = document.getElementById('dashTable');
+  if (dashTb) {
+    const last5 = [...clients].reverse().slice(0, 5);
+    dashTb.innerHTML = last5.length
+      ? last5.map(c => `<tr>
+          <td>${c.nome}</td><td>${c.cpf || '—'}</td><td>${c.data}</td>
+          <td>${badgeStatus(c.status)}</td>
+          <td>R$ ${Number(c.valor||0).toLocaleString('pt-BR')}</td>
+        </tr>`).join('')
+      : empty(5, 'Nenhum cliente cadastrado ainda.');
+  }
+
+  /* Clientes */
+  const cliTb = document.getElementById('clientesTable');
+  if (cliTb) {
+    cliTb.innerHTML = clients.length
+      ? [...clients].reverse().map(c => `<tr>
+          <td>${c.nome}</td>
+          <td>${c.email || '—'}</td>
+          <td>${c.cpf  || '—'}</td>
+          <td>${c.tel  || '—'}</td>
+          <td>${badgeStatus(c.status)}</td>
+          <td>
+            <button class="btn-sm" onclick="changeStatus(${c.id})">Status</button>
+            <button class="btn-sm btn-sm-danger" onclick="removeClient(${c.id})">Excluir</button>
+          </td>
+        </tr>`).join('')
+      : empty(6, 'Nenhum cliente cadastrado.');
+  }
+
+  /* Diagnósticos */
+  const diagTb = document.getElementById('diagTable');
+  if (diagTb) {
+    diagTb.innerHTML = clients.length
+      ? [...clients].reverse().map(c => {
+          const prazo = c.dataSt
+            ? new Date(new Date(c.dataSt).getTime() + 3*24*60*60*1000).toLocaleDateString('pt-BR')
+            : '—';
+          return `<tr>
+            <td>${c.nome}</td>
+            <td>${c.data}</td>
+            <td>${badgeStatus(c.status)}</td>
+            <td>${c.status === 'concluido' ? '—' : prazo}</td>
+            <td><button class="btn-sm" onclick="changeStatus(${c.id})">Atualizar</button></td>
+          </tr>`;
+        }).join('')
+      : empty(5, 'Nenhum diagnóstico registrado.');
+  }
+
+  /* Financeiro */
+  const finTb = document.getElementById('finTable');
+  if (finTb) {
+    finTb.innerHTML = clients.length
+      ? [...clients].reverse().map(c => `<tr>
+          <td>${c.nome}</td>
+          <td>${c.data}</td>
+          <td>R$ ${Number(c.valor||0).toLocaleString('pt-BR')}</td>
+          <td>PIX/Cartão</td>
+          <td><span class="badge badge-green">Pago</span></td>
+        </tr>`).join('')
+      : empty(5, 'Nenhum pagamento registrado.');
+  }
+}
+
+/* ════════════════════════════════════
+   BOOT — exibe painel e liga todos os listeners
+════════════════════════════════════ */
+function boot() {
+  document.getElementById('authGate').style.display  = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+
+  renderAll();
+
+  /* Navegação via sidebar */
+  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+    item.addEventListener('click', () => goPage(item.dataset.page));
+  });
+
+  /* Logout */
+  document.getElementById('sidebarLogout').addEventListener('click', () => {
+    sessionStorage.removeItem('vittare_admin');
+    window.location.href = 'index.html';
+  });
+
+  /* Prévia da tela Obrigado */
+  document.getElementById('previewObrigado').addEventListener('click', () => {
+    const previewUser = {
+      id: 0, nome: 'Prévia Admin', email: 'preview@vittare.com',
+      tel: '(11) 99999-9999', nasc: '1990-01-01',
+      end: 'Rua Exemplo, 100 – São Paulo SP',
+      senha: '', comprou: true,
+      data: new Date().toLocaleDateString('pt-BR'),
+      dataCompra: new Date().toLocaleDateString('pt-BR')
+    };
+    sessionStorage.setItem('vittare_user', JSON.stringify(previewUser));
+    window.open('obrigado.html', '_blank');
+    setTimeout(() => sessionStorage.removeItem('vittare_user'), 4000);
+  });
+
+  /* Tema — topbar e configurações */
+  ['adminThemeToggle', 'cfgThemeToggle'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', () => {
+      const cur = html.getAttribute('data-theme') || 'dark';
+      const nxt = cur === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', nxt);
+      localStorage.setItem('vittare-theme', nxt);
+    });
+  });
+
+  /* Salvar novo cliente */
+  document.getElementById('salvarCliente').addEventListener('click', () => {
+    const nome   = document.getElementById('nc-nome').value.trim();
+    const cpf    = document.getElementById('nc-cpf').value.trim();
+    const email  = document.getElementById('nc-email').value.trim();
+    const tel    = document.getElementById('nc-tel').value.trim();
+    const valor  = parseFloat(document.getElementById('nc-valor').value) || 97;
+    const status = document.getElementById('nc-status').value;
+    const obs    = document.getElementById('nc-obs').value.trim();
+
+    if (!nome || !cpf) { showToast('⚠ Preencha nome e CPF!'); return; }
+
+    const clients = loadClients();
+    const now = new Date();
+    clients.push({
+      id: Date.now(), nome, cpf, email, tel, valor, status, obs,
+      data: now.toLocaleDateString('pt-BR'),
+      dataSt: now.toISOString(),
+    });
+    saveClients(clients);
+
+    ['nc-nome','nc-cpf','nc-email','nc-tel','nc-valor','nc-obs']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('nc-status').value = 'pendente';
+
+    showToast('✅ Cliente salvo com sucesso!');
+    renderAll();
+    goPage('clientes');
+  });
+}
+
+/* ════════════════════════════════════
+   DOMContentLoaded — liga tudo com DOM garantido
+════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  /* Já estava logado? Entra direto */
+  if (sessionStorage.getItem('vittare_admin') === '1') {
+    boot();
+    return;
+  }
+
+  /* Login normal */
+  document.getElementById('gLoginBtn').addEventListener('click', () => {
+    const e = document.getElementById('gEmail').value.trim();
+    const p = document.getElementById('gPass').value;
+    if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
+      sessionStorage.setItem('vittare_admin', '1');
+      boot();
+    } else {
+      document.getElementById('gError').classList.add('show');
+    }
+  });
+
+  /* Enter no campo senha */
+  document.getElementById('gPass').addEventListener('keydown', ev => {
+    if (ev.key === 'Enter') document.getElementById('gLoginBtn').click();
+  });
+
+  /* Limpar erro ao digitar */
+  document.getElementById('gEmail').addEventListener('input', () => {
+    document.getElementById('gError').classList.remove('show');
+  });
+
+  /* Login rápido */
+  document.getElementById('quickLoginBtn').addEventListener('click', () => {
+    sessionStorage.setItem('vittare_admin', '1');
+    boot();
+  });
+});
 </script>
 </body>
 </html>

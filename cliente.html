@@ -220,6 +220,7 @@
       <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
       <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
     </button>
+    <span id="navUserName" style="font-size:13px;font-weight:700;color:var(--gold);display:none;"></span>
     <button class="btn-logout" id="logoutBtn">Sair</button>
   </div>
 </nav>
@@ -238,6 +239,12 @@ function getUser()    { try { return JSON.parse(sessionStorage.getItem('vittare_
 /* ── Auth guard ── */
 const user = getUser();
 if (!user) { window.location.href = 'index.html'; }
+
+// Show name in navbar
+if (user) {
+  const navName = document.getElementById('navUserName');
+  if (navName) { navName.textContent = '👤 ' + user.nome.split(' ')[0]; navName.style.display = 'inline'; }
+}
 
 /* ── Theme ── */
 const html = document.documentElement;
