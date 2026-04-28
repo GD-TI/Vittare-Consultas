@@ -61,27 +61,8 @@
     }
     .vc-progress-fill {
       height: 100%; background: var(--gold); border-radius: 2px;
-      width: 0%; pointer-events: none; position: relative;
+      width: 0%; pointer-events: none;
     }
-    .vc-progress-fill::after {
-      content: '';
-      position: absolute;
-      right: -6px; top: 50%;
-      transform: translateY(-50%) scale(0);
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: var(--gold);
-      transition: transform 0.15s ease;
-      pointer-events: none;
-    }
-    .vc-progress:hover .vc-progress-fill::after {
-      transform: translateY(-50%) scale(1);
-    }
-    .vc-progress:hover {
-      height: 6px;
-      margin-top: -1px;
-    }
-    .vc-progress { transition: height 0.15s ease; }
     .vc-time { font-size: 11px; color: rgba(255,255,255,0.8); flex-shrink: 0; }
 
     /* ── Sobre Nós ── */
@@ -91,31 +72,15 @@
     }
     .sobre-item {
       background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 24px 22px;
-      display: flex; align-items: flex-start; gap: 14px;
+      border-radius: 14px; padding: 28px 24px;
+      display: flex; align-items: flex-start; gap: 16px;
     }
-    .sobre-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
-    .sobre-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
-    .sobre-value { font-size: 15px; color: var(--text-secondary); }
-    .sobre-value a { color: var(--gold); text-decoration: none; }
+    .sobre-icon { font-size: 30px; flex-shrink: 0; margin-top: 2px; }
+    .sobre-label { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .sobre-value { font-size: 17px; color: var(--text-secondary); line-height: 1.55; }
+    .sobre-value a { color: var(--gold); text-decoration: none; font-size: 17px; }
     .sobre-value a:hover { text-decoration: underline; }
     @media (max-width:640px) { .sobre-grid { grid-template-columns:1fr; } }
-
-    /* ── Login modal tabs ── */
-    .modal-tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid var(--border); }
-    .modal-tab {
-      flex: 1; background: none; border: none; padding: 12px 8px;
-      font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent;
-      margin-bottom: -2px; transition: all 0.2s;
-    }
-    .modal-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ── Register form ── */
-    .register-note { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -135,90 +100,9 @@
         <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
         <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
       </button>
-      <a href="#" class="btn-login-nav" id="openLogin"><span>Entrar</span></a>
     </div>
   </div>
 </nav>
-
-
-<!-- ══════════════════════════════════
-     LOGIN MODAL (Cliente + Admin tabs)
-══════════════════════════════════ -->
-<div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true">
-  <div class="modal-box">
-    <button class="modal-close" id="closeLogin" aria-label="Fechar">✕</button>
-    <h2 style="margin-bottom:4px;">Acessar minha conta</h2>
-
-    <!-- Tabs -->
-    <div class="modal-tabs">
-      <button class="modal-tab active" data-tab="cliente">Sou Cliente</button>
-      <button class="modal-tab" data-tab="cadastro">Criar Conta</button>
-      <button class="modal-tab" data-tab="admin">Admin</button>
-    </div>
-
-    <!-- TAB: LOGIN CLIENTE -->
-    <div class="tab-panel active" id="tab-cliente">
-      <div class="form-group">
-        <label for="cliEmail">E-mail</label>
-        <input type="email" id="cliEmail" placeholder="seu@email.com" autocomplete="email"/>
-      </div>
-      <div class="form-group">
-        <label for="cliPass">Senha</label>
-        <input type="password" id="cliPass" placeholder="••••••••"/>
-      </div>
-      <p class="form-error" id="cliError">E-mail ou senha incorretos.</p>
-      <button class="btn-primary btn-full" id="cliLoginBtn" style="margin-top:8px;">Entrar</button>
-      <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:16px;">
-        Não tem conta? Clique em <strong style="color:var(--gold);">Criar Conta</strong> acima.
-      </p>
-    </div>
-
-    <!-- TAB: CADASTRO CLIENTE -->
-    <div class="tab-panel" id="tab-cadastro">
-      <p class="register-note">Crie seu acesso. Após a compra, você poderá acompanhar seu diagnóstico por aqui.</p>
-      <div class="form-group">
-        <label>Nome Completo</label>
-        <input type="text" id="regNome" placeholder="Seu nome completo"/>
-      </div>
-      <div class="form-group">
-        <label>E-mail</label>
-        <input type="email" id="regEmail" placeholder="seu@email.com"/>
-      </div>
-      <div class="form-group">
-        <label>Telefone / WhatsApp</label>
-        <input type="text" id="regTel" placeholder="(11) 99999-9999"/>
-      </div>
-      <div class="form-group">
-        <label>Data de Nascimento</label>
-        <input type="date" id="regNasc"/>
-      </div>
-      <div class="form-group">
-        <label>Endereço Completo</label>
-        <input type="text" id="regEnd" placeholder="Rua, número, bairro, cidade – UF"/>
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" id="regPass" placeholder="Crie uma senha"/>
-      </div>
-      <p class="form-error" id="regError"></p>
-      <button class="btn-primary btn-full" id="regBtn" style="margin-top:8px;">Criar Conta</button>
-    </div>
-
-    <!-- TAB: ADMIN -->
-    <div class="tab-panel" id="tab-admin">
-      <div class="form-group">
-        <label for="adminEmail">E-mail Admin</label>
-        <input type="email" id="adminEmail" placeholder="admin@vittare.com"/>
-      </div>
-      <div class="form-group">
-        <label for="adminPass">Senha</label>
-        <input type="password" id="adminPass" placeholder="••••••••"/>
-      </div>
-      <p class="form-error" id="adminError">Credenciais incorretas.</p>
-      <button class="btn-primary btn-full" id="adminLoginBtn" style="margin-top:8px;">Entrar como Admin</button>
-    </div>
-  </div>
-</div>
 
 
 <!-- ══════════════════════════════════
@@ -300,7 +184,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Descubra o Motivo Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Descubra o Motivo Agora</a>
     </div>
   </div>
 </section>
@@ -333,7 +217,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Ver o que os bancos enxergam sobre mim</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Ver o que os bancos enxergam sobre mim</a>
     </div>
   </div>
 </section>
@@ -366,7 +250,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
@@ -408,7 +292,7 @@
         <li><span class="icon-chk">✓</span> Orientação inicial sobre o que precisa ser ajustado primeiro</li>
       </ul>
 
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary btn-full" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary btn-full" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
 
     <p class="trust-bar">Pagamento seguro &bull; Atendimento individual &bull; Acesso em 3 dias úteis</p>
@@ -454,7 +338,7 @@
     </div>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
@@ -563,13 +447,10 @@
     </ul>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener" onclick="checkLoginBeforeBuy(event)">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
-
-
-<!-- Sobre nós movido para o rodapé -->
 
 
 <!-- ══════════════════════════════════
@@ -585,31 +466,64 @@
 </section>
 
 <footer>
-  <!-- Sobre nós compacto no rodapé -->
-  <div style="max-width:860px;margin:0 auto 32px;padding:0 24px;">
-    <p style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;text-align:center;">Sobre a Vittare</p>
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px 40px;margin-bottom:8px;">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);">
-        <span>📍</span>
-        <span>R. Murutinga do Sul, 47 – Vila Moreira</span>
+  <div class="footer-inner">
+
+    <!-- Logo + tagline -->
+    <div class="footer-brand-col">
+      <img src="logo_dark.png" alt="Vittare" class="footer-logo" id="footerLogo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="footer-logo-text" style="display:none">VITTARE</span>
+      <p class="footer-tagline">Diagnóstico Financeiro Profissional</p>
+    </div>
+
+    <!-- Divider -->
+    <div class="footer-divider"></div>
+
+    <!-- Contact info row -->
+    <div class="footer-contacts">
+      <div class="footer-contact-item">
+        <span class="footer-contact-icon">📍</span>
+        <div>
+          <div class="footer-contact-label">Localização</div>
+          <div class="footer-contact-value">R. Murutinga do Sul, 47 — Vila Moreira</div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);">
-        <span>📞</span>
-        <a href="https://api.whatsapp.com/send/?phone=5511977433408" target="_blank" style="color:var(--gold);text-decoration:none;">+55 11 97743-3408</a>
+      <div class="footer-contact-item">
+        <span class="footer-contact-icon">📞</span>
+        <div>
+          <div class="footer-contact-label">Telefone / WhatsApp</div>
+          <div class="footer-contact-value">
+            <a href="https://api.whatsapp.com/send/?phone=5511977433408" target="_blank">+55 11 97743-3408</a>
+          </div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);">
-        <span>✉️</span>
-        <a href="mailto:vittarecapital@gmail.com" style="color:var(--gold);text-decoration:none;">vittarecapital@gmail.com</a>
+      <div class="footer-contact-item">
+        <span class="footer-contact-icon">✉️</span>
+        <div>
+          <div class="footer-contact-label">E-mail</div>
+          <div class="footer-contact-value">
+            <a href="mailto:vittarecapital@gmail.com">vittarecapital@gmail.com</a>
+          </div>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);">
-        <span>🕐</span>
-        <span>Seg – Sex: 9h às 18h</span>
+      <div class="footer-contact-item">
+        <span class="footer-contact-icon">🕐</span>
+        <div>
+          <div class="footer-contact-label">Horário de Atendimento</div>
+          <div class="footer-contact-value">Seg – Sex: 9h às 18h</div>
+        </div>
       </div>
     </div>
-    <div style="height:1px;background:var(--border);margin:20px 0;"></div>
+
+    <!-- Divider -->
+    <div class="footer-divider"></div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <p>© 2026 Diagnóstico Financeiro Profissional. Todos os direitos reservados.</p>
+      <p>As informações contidas neste site têm caráter educativo. Não nos responsabilizamos por decisões financeiras tomadas pelo usuário.</p>
+    </div>
   </div>
-  <p class="foot-brand">© 2026 Diagnóstico Financeiro Profissional. Todos os direitos reservados.</p>
-  <p>As informações contidas neste site têm caráter educativo. Não nos responsabilizamos por decisões financeiras tomadas pelo usuário.</p>
 </footer>
 
 
@@ -617,11 +531,6 @@
      JAVASCRIPT
 ══════════════════════════════════ -->
 <script>
-/* ── Data store helpers ── */
-function getClients() { try { return JSON.parse(localStorage.getItem('vittare_clients')||'[]'); } catch { return []; } }
-function saveClients(a) { localStorage.setItem('vittare_clients', JSON.stringify(a)); }
-function getCurrentUser() { try { return JSON.parse(sessionStorage.getItem('vittare_user')||'null'); } catch { return null; } }
-
 /* ── Theme ── */
 const html = document.documentElement;
 const saved = localStorage.getItem('vittare-theme');
@@ -630,11 +539,14 @@ if (saved) html.setAttribute('data-theme', saved);
 function applyThemeLogo(theme) {
   const logo = document.getElementById('navLogo');
   const fallback = document.getElementById('navLogoFallback');
-  if (!logo) return;
-  const src = theme === 'light' ? 'logo_light.png' : 'logo_dark.png';
-  logo.src = src;
-  logo.onerror = () => { logo.style.display='none'; if(fallback) fallback.style.display='block'; };
-  logo.onload  = () => { logo.style.display='block'; if(fallback) fallback.style.display='none'; };
+  const footLogo = document.getElementById('footerLogo');
+  if (logo) {
+    const src = theme === 'light' ? 'logo_light.png' : 'logo_dark.png';
+    logo.src = src;
+    logo.onerror = () => { logo.style.display='none'; if(fallback) fallback.style.display='block'; };
+    logo.onload  = () => { logo.style.display='block'; if(fallback) fallback.style.display='none'; };
+  }
+  if (footLogo) footLogo.src = theme === 'light' ? 'logo_light.png' : 'logo_dark.png';
 }
 applyThemeLogo(html.getAttribute('data-theme') || 'dark');
 
@@ -698,114 +610,7 @@ vcFull.addEventListener('click', () => {
   else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
 });
 
-/* ── Login Modal ── */
-const modal = document.getElementById('loginModal');
-document.getElementById('openLogin').addEventListener('click', e => { e.preventDefault(); modal.classList.add('active'); });
-document.getElementById('closeLogin').addEventListener('click', () => modal.classList.remove('active'));
-modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
-
-// Tabs
-document.querySelectorAll('.modal-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-  });
-});
-
-// Admin login
-const ADMIN_EMAIL = 'admin@vittare.com';
-const ADMIN_PASS  = 'Vittare@2026';
-document.getElementById('adminLoginBtn').addEventListener('click', () => {
-  const e = document.getElementById('adminEmail').value.trim();
-  const p = document.getElementById('adminPass').value;
-  if (e === ADMIN_EMAIL && p === ADMIN_PASS) {
-    sessionStorage.setItem('vittare_admin','1');
-    window.location.href = 'admin.html';
-  } else {
-    document.getElementById('adminError').classList.add('show');
-  }
-});
-
-// Client login
-document.getElementById('cliLoginBtn').addEventListener('click', () => {
-  const e = document.getElementById('cliEmail').value.trim();
-  const p = document.getElementById('cliPass').value;
-  const clients = getClients();
-  const user = clients.find(c => c.email === e && c.senha === p);
-  if (user) {
-    sessionStorage.setItem('vittare_user', JSON.stringify(user));
-    window.location.href = 'cliente.html';
-  } else {
-    document.getElementById('cliError').classList.add('show');
-  }
-});
-
-// Register
-document.getElementById('regBtn').addEventListener('click', () => {
-  const nome  = document.getElementById('regNome').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const tel   = document.getElementById('regTel').value.trim();
-  const nasc  = document.getElementById('regNasc').value;
-  const end   = document.getElementById('regEnd').value.trim();
-  const senha = document.getElementById('regPass').value;
-  const errEl = document.getElementById('regError');
-
-  if (!nome||!email||!tel||!nasc||!end||!senha) {
-    errEl.textContent = 'Preencha todos os campos.'; errEl.classList.add('show'); return;
-  }
-  const clients = getClients();
-  if (clients.find(c => c.email === email)) {
-    errEl.textContent = 'E-mail já cadastrado.'; errEl.classList.add('show'); return;
-  }
-  const user = { id: Date.now(), nome, email, tel, nasc, end, senha, comprou: false, data: new Date().toLocaleDateString('pt-BR') };
-  clients.push(user);
-  saveClients(clients);
-  sessionStorage.setItem('vittare_user', JSON.stringify(user));
-  window.location.href = 'cliente.html';
-});
-
-/* ── Check login before buy ── */
-function checkLoginBeforeBuy(e) {
-  const user = getCurrentUser();
-  if (!user) {
-    e.preventDefault();
-    modal.classList.add('active');
-    showToast('⚠ Faça login ou crie sua conta antes de comprar.');
-    return false;
-  }
-  // Logged in — let the payment link open normally (target="_blank")
-  // obrigado.html is only accessible after payment confirmation, not from here
-}
-window.checkLoginBeforeBuy = checkLoginBeforeBuy;
-
-/* ── Toast ── */
-function showToast(msg) {
-  let t = document.getElementById('siteToast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'siteToast';
-    t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:999;background:var(--bg-card);border:1.5px solid var(--gold);border-radius:10px;padding:14px 20px;font-size:14px;color:var(--text-primary);box-shadow:var(--shadow);transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:300px;';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  requestAnimationFrame(() => { t.style.transform = 'translateY(0)'; t.style.opacity = '1'; });
-  setTimeout(() => { t.style.transform = 'translateY(80px)'; t.style.opacity = '0'; }, 3500);
-}
-
-/* ── Check if already logged in ── */
-const loggedUser = getCurrentUser();
-if (loggedUser) {
-  const loginLink = document.getElementById('openLogin');
-  const firstName = loggedUser.nome.split(' ')[0];
-  loginLink.innerHTML = `<span>👤 ${firstName}</span>`;
-  loginLink.href = 'cliente.html';
-  loginLink.removeEventListener && loginLink.replaceWith(loginLink.cloneNode(true));
-  document.getElementById('openLogin').addEventListener('click', e => {
-    e.preventDefault(); window.location.href = 'cliente.html';
-  });
-}
+/* ── Login Modal — REMOVIDO: clientes vão direto ao link de compra ── */
 
 /* ── FAQ ── */
 document.querySelectorAll('.faq-q').forEach(btn => {
