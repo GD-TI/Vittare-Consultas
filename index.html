@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -95,12 +95,7 @@
       <span class="navbar__logo-text" id="navLogoFallback" style="display:none">VITTARE</span>
     </a>
 
-    <div class="navbar__actions">
-      <button class="theme-toggle" id="themeToggle" title="Alternar tema" aria-label="Alternar tema claro/escuro">
-        <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
-        <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
-      </button>
-    </div>
+    <div class="navbar__actions"></div>
   </div>
 </nav>
 
@@ -531,31 +526,22 @@
      JAVASCRIPT
 ══════════════════════════════════ -->
 <script>
-/* ── Theme ── */
+/* ── Theme fixo: modo claro ── */
 const html = document.documentElement;
-const saved = localStorage.getItem('vittare-theme');
-if (saved) html.setAttribute('data-theme', saved);
+html.setAttribute('data-theme', 'light');
 
-function applyThemeLogo(theme) {
+function applyThemeLogo() {
   const logo = document.getElementById('navLogo');
   const fallback = document.getElementById('navLogoFallback');
   const footLogo = document.getElementById('footerLogo');
   if (logo) {
-    const src = theme === 'light' ? 'logo_light.png' : 'logo_dark.png';
-    logo.src = src;
+    logo.src = 'logo_light.png';
     logo.onerror = () => { logo.style.display='none'; if(fallback) fallback.style.display='block'; };
     logo.onload  = () => { logo.style.display='block'; if(fallback) fallback.style.display='none'; };
   }
-  if (footLogo) footLogo.src = theme === 'light' ? 'logo_light.png' : 'logo_dark.png';
+  if (footLogo) footLogo.src = 'logo_light.png';
 }
-applyThemeLogo(html.getAttribute('data-theme') || 'dark');
-
-document.getElementById('themeToggle').addEventListener('click', () => {
-  const n = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', n);
-  localStorage.setItem('vittare-theme', n);
-  applyThemeLogo(n);
-});
+applyThemeLogo();
 
 /* ── Video: autoplay mudo + botão mute + controles ── */
 const vid = document.getElementById('mainVideo');
