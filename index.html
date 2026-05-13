@@ -15,6 +15,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 
+  <!-- Facebook Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1514911000018496');
+    fbq('track', 'PageView');
+
+    // Evento ViewContent ao rolar 50% da página
+    var viewContentFired = false;
+    window.addEventListener('scroll', function() {
+      if (viewContentFired) return;
+      var scrolled = window.scrollY + window.innerHeight;
+      var total = document.documentElement.scrollHeight;
+      if (scrolled / total >= 0.5) {
+        fbq('track', 'ViewContent');
+        viewContentFired = true;
+      }
+    });
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1514911000018496&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Facebook Pixel -->
+
   <style>
     /* ── Live / Muted badge ── */
     .video-mute-btn {
@@ -179,7 +211,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" class="btn-primary" target="_blank" rel="noopener">Descubra o Motivo Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" onclick="fbq('track','InitiateCheckout')" class="btn-primary" target="_blank" rel="noopener">Descubra o Motivo Agora</a>
     </div>
   </div>
 </section>
@@ -212,7 +244,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" class="btn-primary" target="_blank" rel="noopener">Ver o que os bancos enxergam sobre mim</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" onclick="fbq('track','InitiateCheckout')" class="btn-primary" target="_blank" rel="noopener">Ver o que os bancos enxergam sobre mim</a>
     </div>
   </div>
 </section>
@@ -245,7 +277,7 @@
     </p>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" onclick="fbq('track','InitiateCheckout')" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
@@ -287,7 +319,7 @@
         <li><span class="icon-chk">✓</span> Orientação inicial sobre o que precisa ser ajustado primeiro</li>
       </ul>
 
-      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" class="btn-primary btn-full" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" onclick="fbq('track','InitiateCheckout')" class="btn-primary btn-full" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
 
     <p class="trust-bar">Pagamento seguro &bull; Atendimento individual &bull; Acesso em 3 dias úteis</p>
@@ -333,7 +365,7 @@
     </div>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" onclick="fbq('track','InitiateCheckout')" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
@@ -442,7 +474,7 @@
     </ul>
 
     <div class="btn-center">
-      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
+      <a href="https://payfast.greenn.com.br/5f3aq2n/offer/8v2nCL?b_id_1=2s2qn6c&b_offer_1=BnNP5y" onclick="fbq('track','InitiateCheckout')" class="btn-primary" target="_blank" rel="noopener">Quero Meu Diagnóstico Agora</a>
     </div>
   </div>
 </section>
